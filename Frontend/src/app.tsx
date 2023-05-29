@@ -1,12 +1,9 @@
 import React, { useState, useCallback } from "react";
-import { XdcConnect, Disconnect } from "xdc-connect";
 import "./app.css";
 import { Web3ModalContext } from "./contexts/Web3ModalProvider";
-import { BlockchainContext } from "./contexts/BlockchainProvider";
 
 const App: React.FC = () => {
-  const [slide, setSlide] = useState(0);
-  const { web3, account, connect, disconnect, chainId } =
+  const { account, connect, disconnect } =
     React.useContext(Web3ModalContext);
   const [tokensOffered, setTokensOffered] = useState([
     { id: 1, token: "", amount: 0 }
