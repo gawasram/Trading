@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-image: url("C:\blockchainlaboratories\Project3\XDC-TRADE\frontend\src\environment.jpg");
+  background-image: url("environment.jpg");
   background-size: cover;
   background-position: center;
 }
@@ -33,25 +33,18 @@ button {
   margin-bottom: 30px;
 }
 
-#connect-xdcpay {
-  position: fixed;
+#create-offer {
+  background-color: #0ca02c;
+  color: #fff;
+  width: 150px;
+  height: 40px;
+}
+
+.button-container {
+  position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #3498db;
-  color: #fff;
-  width: 150px;
-  height: 40px;
 }
 
-#create-offer {
-  background-color: #27ae60;
-  color: #fff;
-  width: 150px;
-  height: 40px;
-}
 
-#Add Another {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-}
+

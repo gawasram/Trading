@@ -1,9 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { XdcConnect, Disconnect } from "xdc-connect";
 import "./app.css";
+import { Web3ModalContext } from "./contexts/Web3ModalProvider";
+import { BlockchainContext } from "./contexts/BlockchainProvider";
 
 const App: React.FC = () => {
-  const [tokensOffered, setTokensOffered] = useState([{ id: 1, token: "", amount: 0 }]);
-  const [tokensWanted, setTokensWanted] = useState([{ id: 1, token: "", amount: 0 }]);
+  const [slide, setSlide] = useState(0);
+  const { web3, account, connect, disconnect, chainId } =
+    React.useContext(Web3ModalContext);
+  const [tokensOffered, setTokensOffered] = useState([
+    { id: 1, token: "", amount: 0 }
+  ]);
+  const [tokensWanted, setTokensWanted] = useState([
+    { id: 1, token: "", amount: 0 }
+  ]);
 
   const handleAddTokenOffered = () => {
     const newToken = { id: tokensOffered.length + 1, token: "", amount: 0 };
@@ -33,26 +43,40 @@ const App: React.FC = () => {
     // Logic to handle form submission
   };
 
-  const handleConnectXDCPay = () => {
-    // Logic to open XDCPay wallet
-    // You can replace the alert with the actual code to open the XDCPay wallet
-    alert("Open XDCPay wallet");
-  };
+  const handleConnectXDCPay = useCallback(() => {
+    connect();
+  }, [connect]);
+
+  const handleDisconnectWallet = useCallback(() => {
+    disconnect();
+  }, [disconnect]);
 
   return (
     <main className="main">
+      <div className="button-container">
+      {!account ? (
+        <button onClick={handleConnectXDCPay}>Connect XDCPay</button>
+      ) : (
+        <button onClick={handleDisconnectWallet}>Disconnect</button>
+      )}
+      </div>
+
       {tokensOffered.map((token) => (
         <div key={token.id} className="token-wrapper">
           <h3>Amount</h3>
           <input
             type="number"
             value={token.amount}
-            onChange={(e) => handleTokenOfferedChange(token.id, "amount", e.target.value)}
+            onChange={(e) =>
+              handleTokenOfferedChange(token.id, "amount", e.target.value)
+            }
           />
           <h3>Tokens Offered</h3>
           <select
             value={token.token}
-            onChange={(e) => handleTokenOfferedChange(token.id, "token", e.target.value)}
+            onChange={(e) =>
+              handleTokenOfferedChange(token.id, "token", e.target.value)
+            }
           >
             <option value="">Select Token</option>
             <option value="WOOD">WOOD</option>
@@ -72,12 +96,16 @@ const App: React.FC = () => {
           <input
             type="number"
             value={token.amount}
-            onChange={(e) => handleTokenWantedChange(token.id, "amount", e.target.value)}
+            onChange={(e) =>
+              handleTokenWantedChange(token.id, "amount", e.target.value)
+            }
           />
           <h3>Tokens Wanted</h3>
           <select
             value={token.token}
-            onChange={(e) => handleTokenWantedChange(token.id, "token", e.target.value)}
+            onChange={(e) =>
+              handleTokenWantedChange(token.id, "token", e.target.value)
+            }
           >
             <option value="">Select Token</option>
             <option value="WOOD">WOOD</option>
@@ -90,10 +118,6 @@ const App: React.FC = () => {
       ))}
 
       <button onClick={handleAddTokenWanted}>Add Another</button>
-
-      <button id="connect-xdcpay" onClick={handleConnectXDCPay}>
-        Connect XDCPay
-      </button>
 
       <button id="create-offer" onClick={handleSubmit}>
         CREATE OFFER TO TRADE
