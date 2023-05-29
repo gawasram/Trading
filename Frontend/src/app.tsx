@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { XdcConnect, Disconnect } from "xdc-connect";
 import "./app.css";
 
 const App: React.FC = () => {
   const [tokensOffered, setTokensOffered] = useState([{ id: 1, token: "", amount: 0 }]);
   const [tokensWanted, setTokensWanted] = useState([{ id: 1, token: "", amount: 0 }]);
-  const [wallet, setWallet] = useState({ connected: false });
 
   const handleAddTokenOffered = () => {
     const newToken = { id: tokensOffered.length + 1, token: "", amount: 0 };
@@ -31,15 +29,14 @@ const App: React.FC = () => {
     setTokensWanted(updatedTokens);
   };
 
-  const handleConnectXDCPay = () => {
-    // Logic to open XDCPay wallet
-    // Replace this with the actual code to open the XDCPay wallet
-    console.log("Connect XDCPay clicked");
+  const handleSubmit = () => {
+    // Logic to handle form submission
   };
 
-  const handleSubmit = () => {
-    // Logic to handle submit
-    console.log("Submit button clicked");
+  const handleConnectXDCPay = () => {
+    // Logic to open XDCPay wallet
+    // You can replace the alert with the actual code to open the XDCPay wallet
+    alert("Open XDCPay wallet");
   };
 
   return (
@@ -101,25 +98,6 @@ const App: React.FC = () => {
       <button id="create-offer" onClick={handleSubmit}>
         CREATE OFFER TO TRADE
       </button>
-
-      <XdcConnect
-        btnClass={
-          wallet.connected
-            ? "btn btn-rounded btn-success"
-            : "btn btn-rounded btn-warning"
-        }
-        btnName={wallet.connected ? "CONNECTED" : "CONNECT"}
-        onConnect={(wallet) => {
-          console.log("user connected wallet", wallet);
-          setWallet({ connected: true });
-        }}
-        onDisconnect={(wallet) => {
-          console.log("user disconnected wallet", wallet);
-          setWallet({ connected: false });
-        }}
-      />
-
-      {wallet.connected ? <button onClick={Disconnect}>Logout</button> : null}
     </main>
   );
 };
