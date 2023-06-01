@@ -7,6 +7,7 @@ import TokenSwapWrapper from "../blockchain/TokenSwapWrapper";
 import WoodInTheBlockchainLandWrapper from "../blockchain/WoodInTheBlockchainLandWrapper";
 import WoodTokenWrapper from "../blockchain/WoodTokenWrapper";
 import WoolInTheBlockchainLandWrapper from "../blockchain/WoolInTheBlockchainLandWrapper";
+import tradeOfferWrapper from "../blockchain/tradeOfferWrapper"; // Import tradeOfferWrapper
 
 interface IBlockchainContext {
   faucet: FaucetWrapper | null;
@@ -16,6 +17,7 @@ interface IBlockchainContext {
   woodInTheBlockchainLand: WoodInTheBlockchainLandWrapper | null;
   woodToken: WoodTokenWrapper | null;
   woolInTheBlockchainLand: WoolInTheBlockchainLandWrapper | null;
+  tradeOffer: tradeOfferWrapper | null; // Add tradeOfferWrapper
 }
 
 export const BlockchainContext = createContext<IBlockchainContext>({
@@ -26,6 +28,7 @@ export const BlockchainContext = createContext<IBlockchainContext>({
   woodInTheBlockchainLand: null,
   woodToken: null,
   woolInTheBlockchainLand: null,
+  tradeOffer: null, // Add tradeOfferWrapper
 });
 
 export const BlockchainProvider = ({ children }) => {
@@ -41,6 +44,7 @@ export const BlockchainProvider = ({ children }) => {
   const [woodToken, setWoodToken] = useState<WoodTokenWrapper | null>(null);
   const [woolInTheBlockchainLand, setWoolInTheBlockchainLand] =
     useState<WoolInTheBlockchainLandWrapper | null>(null);
+  const [tradeOffer, setTradeOffer] = useState<tradeOfferWrapper | null>(null); // Add tradeOfferWrapper
 
   useEffect(() => {
     if (web3 && chainId && account) {
@@ -68,6 +72,7 @@ export const BlockchainProvider = ({ children }) => {
           chainId,
           account
         );
+        const _tradeOffer = new tradeOfferWrapper(web3, chainId, account); // Initialize tradeOfferWrapper
 
         setFaucet(_faucet);
         setFishInTheBlockchainLand(_fishInTheBlockchainLand);
@@ -76,6 +81,7 @@ export const BlockchainProvider = ({ children }) => {
         setWoodInTheBlockchainLand(_woodInTheBlockchainLand);
         setWoodToken(_woodToken);
         setWoolInTheBlockchainLand(_woolInTheBlockchainLand);
+        setTradeOffer(_tradeOffer); // Set tradeOfferWrapper
       } catch (error) {
         console.error("Failed to initialize contracts:", error);
       }
@@ -92,6 +98,7 @@ export const BlockchainProvider = ({ children }) => {
         woodInTheBlockchainLand,
         woodToken,
         woolInTheBlockchainLand,
+        tradeOffer, // Add tradeOfferWrapper
       }}
     >
       {children}

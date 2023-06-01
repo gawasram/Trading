@@ -1,6 +1,24 @@
 import React, { useState, useCallback } from "react";
 import "./app.css";
 import { Web3ModalContext } from "./contexts/Web3ModalProvider";
+import { BlockchainContext } from "./contexts/BlockchainProvider";
+
+type TradeOffer = {
+  offerId: number;
+  offerCreator: string;
+  offerAmount1: number;
+  offerAmount2: number;
+  offerAmount3: number;
+  offerAmount4: number;
+  offerAmount5: number;
+  wantedAmount1: number;
+  wantedAmount2: number;
+  wantedAmount3: number;
+  wantedAmount4: number;
+  wantedAmount5: number;
+  offerTimestamp: number;
+  offerStatus: boolean;
+};
 
 interface Offer {
   id: number;
@@ -120,7 +138,12 @@ const App: React.FC = () => {
         setOpenOffers(updatedOffers);
 
         // Optional: Interact with a contract or perform additional logic
-        // ...
+        // Declare and define the tradeOffer variable
+        const tradeOffer: TradeOffer | undefined = undefined; 
+        if (tradeOffer) {
+          // Perform the tradeOffer action here
+          await tradeOffer.performTrade(offerId);
+        }
 
         // Sign the transaction
         const signature = await signer.sign("Hello, World!");

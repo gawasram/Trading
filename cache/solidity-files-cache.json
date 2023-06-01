@@ -1978,6 +1978,132 @@
       "artifacts": [
         "FishInTheBlockchainLand"
       ]
+    },
+    "C:\\blockchainlaboratories\\Project3\\XDC-TRADE\\contracts\\Faucet-flat.sol": {
+      "lastModificationDate": 1685295321800,
+      "contentHash": "781d1c894697994391e51cc54ed9bcd9",
+      "sourceName": "contracts/Faucet-flat.sol",
+      "solcConfig": {
+        "version": "0.8.16",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "Context",
+        "ERC20",
+        "Faucet",
+        "IERC20",
+        "IERC20Metadata",
+        "Ownable"
+      ]
+    },
+    "C:\\blockchainlaboratories\\Project3\\XDC-TRADE\\contracts\\WoodToken-flat.sol": {
+      "lastModificationDate": 1685294684102,
+      "contentHash": "356b09adc6c4289d11cc650b94fa03ba",
+      "sourceName": "contracts/WoodToken-flat.sol",
+      "solcConfig": {
+        "version": "0.8.16",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "Context",
+        "ERC20",
+        "IERC20",
+        "IERC20Metadata",
+        "WoodToken"
+      ]
+    },
+    "C:\\blockchainlaboratories\\Project3\\XDC-TRADE\\contracts\\tradeOffer.sol": {
+      "lastModificationDate": 1685532395390,
+      "contentHash": "63ad51ae9ccffcbd31ce5e2602c3c4e8",
+      "sourceName": "contracts/tradeOffer.sol",
+      "solcConfig": {
+        "version": "0.8.16",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/Counters.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20",
+        "tradeOffer"
+      ]
     }
   }
 }

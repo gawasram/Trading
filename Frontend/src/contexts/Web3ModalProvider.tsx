@@ -5,6 +5,7 @@ import { providerOptions } from "xdcpay-connect";
 
 interface IWeb3ModalContext {
   web3: Web3 | null;
+  signer: any | null;
   connect: () => void;
   disconnect: () => void;
   account: string | null;
@@ -15,6 +16,7 @@ interface IWeb3ModalContext {
 
 export const Web3ModalContext = createContext<IWeb3ModalContext>({
   web3: null,
+  signer: null,
   connect: () => {},
   disconnect: () => {},
   account: null,
@@ -26,6 +28,7 @@ export const Web3ModalContext = createContext<IWeb3ModalContext>({
 const Web3ModalProvider = ({ children }) => {
   const [web3Modal, setWeb3Modal] = useState<Web3Modal | null>(null);
   const [web3, setWeb3] = useState<Web3 | null>(null);
+  const [signer, setSigner] = useState<any | null>(null);
   const [account, setAccount] = useState<string | null>(null);
   const [chainId, setChainId] = useState<number | null>(null);
   const [networkId, setNetworkId] = useState<number | null>(null);
@@ -59,6 +62,7 @@ const Web3ModalProvider = ({ children }) => {
 
   const resetWeb3 = useCallback(() => {
     setWeb3(null);
+    setSigner(null);
     setAccount(null);
     setChainId(null);
     setNetworkId(null);
@@ -94,22 +98,25 @@ const Web3ModalProvider = ({ children }) => {
   const connect = useCallback(async () => {
     if (!web3Modal) return;
 
-    const _provider = await web3Modal.connect();
-    if (_provider === null) return;
+    const provider = await web3Modal.connect();
+    if (provider === null) return;
 
-    const _web3 = createWeb3(_provider);
-    setWeb3(_web3);
+    const web3 = createWeb3(provider);
+    const signer = web3.eth.personal;
 
-    await subscribeProvider(_provider, _web3);
+    setWeb3(web3);
+    setSigner(signer);
 
-    const accounts = await _web3.eth.getAccounts();
-    const _account = _web3.utils.toChecksumAddress(accounts[0]);
-    const _networkId = await _web3.eth.net.getId();
-    const _chainId = await _web3.eth.getChainId();
+    await subscribeProvider(provider, web3);
 
-    setAccount(_account);
-    setNetworkId(Number(_networkId));
-    setChainId(Number(_chainId));
+    const accounts = await web3.eth.getAccounts();
+    const account = web3.utils.toChecksumAddress(accounts[0]);
+    const networkId = await web3.eth.net.getId();
+    const chainId = await web3.eth.getChainId();
+
+    setAccount(account);
+    setNetworkId(Number(networkId));
+    setChainId(Number(chainId));
     setConnected(true);
   }, [web3Modal, subscribeProvider]);
 
@@ -134,6 +141,7 @@ const Web3ModalProvider = ({ children }) => {
     <Web3ModalContext.Provider
       value={{
         web3,
+        signer,
         connect,
         disconnect,
         account,
