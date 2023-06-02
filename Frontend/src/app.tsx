@@ -32,7 +32,7 @@ interface Offer {
 
 const App: React.FC = () => {
   // Accessing the Web3ModalContext
-  const { account, connect, disconnect, signer } = React.useContext(
+  const { web3, account, connect, disconnect, signer, chainId } = React.useContext(
     Web3ModalContext
   );
 
@@ -43,6 +43,12 @@ const App: React.FC = () => {
   const [tokensWanted, setTokensWanted] = useState([
     { id: 1, token: "", amount: 0 }
   ]);
+
+
+// add the blockchain context 
+  const {
+    tradeOffer: tradeOfferWrapper,
+  } = React.useContext(BlockchainContext);
 
   // State for open offers
   const [openOffers, setOpenOffers] = useState<Offer[]>([]);
@@ -95,6 +101,82 @@ const App: React.FC = () => {
       return;
     }
 
+    // Create an array to store the ordered tokens
+  const tokensOfferedData = Array(5).fill(null);
+
+  for (let i = 0; i < tokensOffered.length; i++) {
+    if (tokensOffered[i].token === "WOOD") {
+      tokensOfferedData[0] = tokensOffered[i];
+    } else if (tokensOffered[i].token === "ROCK") {
+      tokensOfferedData[1] = tokensOffered[i];
+    } else if (tokensOffered[i].token === "CLAY") {
+      tokensOfferedData[2] = tokensOffered[i];
+    } else if (tokensOffered[i].token === "WOOL") {
+      tokensOfferedData[3] = tokensOffered[i];
+    } else if (tokensOffered[i].token === "FISH") {
+      tokensOfferedData[4] = tokensOffered[i];
+    }
+  }
+
+  // Set amount to 0 for empty tokens in tokensOfferedData
+  for (let i = 0; i < tokensOfferedData.length; i++) {
+    if (tokensOfferedData[i] === null) {
+      tokensOfferedData[i] = { id: i + 1, token: "", amount: 0 };
+    }
+  }
+
+   // Create an array to store the wanted tokens
+   const tokensWantedData = Array(5).fill(null);
+
+   for (let i = 0; i < tokensWanted.length; i++) {
+     if (tokensWanted[i].token === "WOOD") {
+       tokensWantedData[0] = tokensWanted[i];
+     } else if (tokensWanted[i].token === "ROCK") {
+       tokensWantedData[1] = tokensWanted[i];
+     } else if (tokensWanted[i].token === "CLAY") {
+       tokensWantedData[2] = tokensWanted[i];
+     } else if (tokensWanted[i].token === "WOOL") {
+       tokensWantedData[3] = tokensWanted[i];
+     } else if (tokensWanted[i].token === "FISH") {
+       tokensWantedData[4] = tokensWanted[i];
+     }
+   }
+ 
+   // Set amount to 0 for empty tokens in tokensWantedData
+   for (let i = 0; i < tokensWantedData.length; i++) {
+     if (tokensWantedData[i] === null) {
+       tokensWantedData[i] = { id: i + 1, token: "", amount: 0 };
+     }
+   }
+
+  const tokenAmounts: number[] = [];
+
+  for (let i = 0; i < tokensOfferedData.length; i++) {
+    const { amount } = tokensOfferedData[i];
+    tokenAmounts.push(amount);
+  }
+
+  for (let i = 0; i < tokensWantedData.length; i++) {
+    const { amount } = tokensWantedData[i];
+    tokenAmounts.push(amount);
+  }
+
+  const tokenAmountsTuple = tokenAmounts as [number, number, number, number, number, number, number, number, number, number];
+
+    if (web3 && account && chainId) {
+      tradeOfferWrapper
+        ?.makeOffer(...tokenAmountsTuple)
+        .then(() => {
+          alert("Offer created successfully!");
+        })
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((err) => {
+          alert(`Error: ${err.message}`);
+        });
+    }
+
     // Prepare the data to be submitted
     const newOffer: Offer = {
       id: openOffers.length + 1,
@@ -108,6 +190,9 @@ const App: React.FC = () => {
 
     // Update the open offers state
     setOpenOffers([...openOffers, newOffer]);
+
+
+
 
     // Reset the form after submission
     setTokensOffered([{ id: 1, token: "", amount: 0 }]);
@@ -139,11 +224,11 @@ const App: React.FC = () => {
 
         // Optional: Interact with a contract or perform additional logic
         // Declare and define the tradeOffer variable
-        const tradeOffer: TradeOffer | undefined = undefined; 
-        if (tradeOffer) {
-          // Perform the tradeOffer action here
-          await tradeOffer.performTrade(offerId);
-        }
+        // const tradeOffer: TradeOffer | undefined = undefined; 
+        // if (tradeOffer) {
+        //   // Perform the tradeOffer action here
+        //   await tradeOffer.performTrade(offerId);
+        // }
 
         // Sign the transaction
         const signature = await signer.sign("Hello, World!");
@@ -168,8 +253,39 @@ const App: React.FC = () => {
           <button onClick={handleDisconnectWallet}>Disconnect</button>
         )}
       </div>
-
+<div className="container">
+      {/* Open Offers */}
+      <div className="open-offers left-column">
+  <h2>Marketplace Offers (List of Open Offers)</h2>
+  {openOffers.length > 0 ? (
+    <ul>
+      {openOffers.map((offer) => (
+        <li key={offer.id}>
+          <strong>Offer #{offer.id}</strong>
+          <p>
+            Tokens Offered: {offer.tokensOffered
+              .map((token) => `${token.amount} ${token.token}`)
+              .join(", ")}
+          </p>
+          <p>
+            Tokens Wanted: {offer.tokensWanted
+              .map((token) => `${token.amount} ${token.token}`)
+              .join(", ")}
+          </p>
+          <p>Status: {offer.status}</p>
+          <p>Creator: {offer.creator}</p>
+          <p>Date: {offer.date}</p>
+          <p>Time: {offer.time}</p>
+          <button onClick={() => initiateTrade(offer.id)}>TRADE</button>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>No open offers available.</p>
+  )}
+</div>
       {/* Tokens Offered */}
+      <div>
       {tokensOffered.map((token) => (
         <div key={token.id} className="token-wrapper">
           <h3>Amount</h3>
@@ -228,42 +344,15 @@ const App: React.FC = () => {
       ))}
 
       <button onClick={handleAddTokenWanted}>Add Another</button>
-
+      <div>
       {/* Create Offer button */}
       <button id="create-offer" onClick={handleSubmit}>
         CREATE OFFER TO TRADE
       </button>
-
-      {/* Open Offers */}
-      <div className="open-offers">
-        <h2>Marketplace Offers (List of Open Offers)</h2>
-        {openOffers.length > 0 ? (
-          <ul>
-            {openOffers.map((offer) => (
-              <li key={offer.id}>
-                <strong>Offer #{offer.id}</strong>
-                <p>
-                  Tokens Offered: {offer.tokensOffered
-                    .map((token) => `${token.amount} ${token.token}`)
-                    .join(", ")}
-                </p>
-                <p>
-                  Tokens Wanted: {offer.tokensWanted
-                    .map((token) => `${token.amount} ${token.token}`)
-                    .join(", ")}
-                </p>
-                <p>Status: {offer.status}</p>
-                <p>Creator: {offer.creator}</p>
-                <p>Date: {offer.date}</p>
-                <p>Time: {offer.time}</p>
-                <button onClick={() => initiateTrade(offer.id)}>TRADE</button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No open offers available.</p>
-        )}
       </div>
+      </div>
+ 
+</div>
     </main>
   );
 };
