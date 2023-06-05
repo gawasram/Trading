@@ -1675,46 +1675,6 @@
         "WoolInTheBlockchainLand"
       ]
     },
-    "C:\\blockchainlaboratories\\Project3\\XDC-TRADE\\contracts\\TokenSwap.sol": {
-      "lastModificationDate": 1684387420790,
-      "contentHash": "eb90f034e687a4b70e90875ef939c03b",
-      "sourceName": "contracts/TokenSwap.sol",
-      "solcConfig": {
-        "version": "0.8.16",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/utils/Counters.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.4"
-      ],
-      "artifacts": [
-        "TokenSwap"
-      ]
-    },
     "C:\\blockchainlaboratories\\Project3\\XDC-TRADE\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
       "lastModificationDate": 1685008614484,
       "contentHash": "5a20b2cad87ddb61c7a3a6af21289e28",
@@ -1979,97 +1939,9 @@
         "FishInTheBlockchainLand"
       ]
     },
-    "C:\\blockchainlaboratories\\Project3\\XDC-TRADE\\contracts\\Faucet-flat.sol": {
-      "lastModificationDate": 1685295321800,
-      "contentHash": "781d1c894697994391e51cc54ed9bcd9",
-      "sourceName": "contracts/Faucet-flat.sol",
-      "solcConfig": {
-        "version": "0.8.16",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0",
-        "^0.8.0",
-        "^0.8.0",
-        "^0.8.0",
-        "^0.8.0",
-        "^0.8.4"
-      ],
-      "artifacts": [
-        "Context",
-        "ERC20",
-        "Faucet",
-        "IERC20",
-        "IERC20Metadata",
-        "Ownable"
-      ]
-    },
-    "C:\\blockchainlaboratories\\Project3\\XDC-TRADE\\contracts\\WoodToken-flat.sol": {
-      "lastModificationDate": 1685294684102,
-      "contentHash": "356b09adc6c4289d11cc650b94fa03ba",
-      "sourceName": "contracts/WoodToken-flat.sol",
-      "solcConfig": {
-        "version": "0.8.16",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0",
-        "^0.8.0",
-        "^0.8.0",
-        "^0.8.0",
-        "^0.8.4"
-      ],
-      "artifacts": [
-        "Context",
-        "ERC20",
-        "IERC20",
-        "IERC20Metadata",
-        "WoodToken"
-      ]
-    },
     "C:\\blockchainlaboratories\\Project3\\XDC-TRADE\\contracts\\tradeOffer.sol": {
-      "lastModificationDate": 1685532395390,
-      "contentHash": "63ad51ae9ccffcbd31ce5e2602c3c4e8",
+      "lastModificationDate": 1685968689744,
+      "contentHash": "5d149dac6076c965a5edc99d27a360f4",
       "sourceName": "contracts/tradeOffer.sol",
       "solcConfig": {
         "version": "0.8.16",
@@ -2095,13 +1967,13 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/utils/Counters.sol"
+        "@openzeppelin/contracts/utils/Counters.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "IERC20",
         "tradeOffer"
       ]
     }

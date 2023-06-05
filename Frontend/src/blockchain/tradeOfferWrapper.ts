@@ -1,15 +1,13 @@
 import Web3 from 'web3';
-import tradeOffer from './contracts/tradeOffer';
+import TradeOffer from './contracts/tradeOffer';
 import { tradeOfferAddress } from './constants';
 
-//work here
-
-export default class tradeOfferWrapper {
+export default class TradeOfferWrapper {
   web3: Web3;
   chainId: number;
   account: string;
   wrapperOptions: any;
-  Contract: tradeOffer;
+  Contract: TradeOffer;
 
   constructor(web3, chainId, account, options = {}) {
 
@@ -21,7 +19,7 @@ export default class tradeOfferWrapper {
       web3, chainId, account, ...options
     }
 
-    this.Contract = new tradeOffer(this.wrapperOptions, tradeOfferAddress.Contract[this.chainId]);
+    this.Contract = new TradeOffer(this.wrapperOptions, tradeOfferAddress.Contract[this.chainId]);
   }
 
   async balanceOf(): Promise<unknown> {
@@ -110,6 +108,12 @@ export default class tradeOfferWrapper {
         throw error;
     }
   }
-
-  
+  async initiateTrade(offerId: number): Promise<unknown> {
+    try {
+      const tx = await this.Contract.send("initiateTrade", this.account, offerId);
+      return tx;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

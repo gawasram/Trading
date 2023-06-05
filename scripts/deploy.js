@@ -36,22 +36,10 @@ async function main() {
   console.log("WOOL deployed to:", wool.address);
 
   const tradeOfferFactory = await hre.ethers.getContractFactory("tradeOffer");
-  const tradeOffer = await tradeOfferFactory.deploy(
-    "0xb41E3ce9A37643d7B4a67f62126468F1C6F70364", // Replace with the actual token1 address
-    "0x61D620473acd26cB76C2867860479C9a18e63020", // Replace with the actual token2 address
-    "0x17864B7bf61073DF9ED6c0ee90f8117687c2ADe6", // Replace with the actual token3 address
-    "0xfE2f637036B869d7F296708BaAd3622c53f0D97D", // Replace with the actual token4 address
-    "0x80fF8a9A77F78FC413015068a858F7A56848480A"  // Replace with the actual token5 address
-  );
+  const tradeOffer = await tradeOfferFactory.deploy();
   await tradeOffer.deployed();
 
   console.log("tradeOffer deployed to:", tradeOffer.address);
-
-  const TokenSwap = await hre.ethers.getContractFactory("TokenSwap");
-  const tokenSwap = await TokenSwap.deploy(wood.address);
-  await tokenSwap.deployed();
-
-  console.log("TokenSwap deployed to:", tokenSwap.address);
 }
 
 main()
