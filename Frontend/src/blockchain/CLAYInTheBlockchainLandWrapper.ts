@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import CLAYInTheBlockchainLand from './contracts/CLAYInTheBlockchainLand';
-import { CLAYTokenAddress } from './constants';
+import { CLAYTokenAddress, tradeOfferAddress } from './constants';
 
 export default class CLAYInTheBlockchainLandWrapper {
     web3: Web3;
@@ -9,7 +9,7 @@ export default class CLAYInTheBlockchainLandWrapper {
     wrapperOptions: any;
     Contract: CLAYInTheBlockchainLand;
 
-    constructor(web3, chainId, account, options = {}) {
+    constructor(web3: Web3, chainId: number, account: string, options: any) {
         this.web3 = web3;
         this.chainId = chainId;
         this.account = account;
@@ -33,8 +33,8 @@ export default class CLAYInTheBlockchainLandWrapper {
     async approve() {
         const value = '115792089237316195423570985008687907853269984665640564039457584007913129639935'; // (2^256 - 1)
         try {
-            const tx = await this.Contract.send('approve', { from: this.account }, CLAYTokenAddress.Contract[this.chainId], value);
-            console.log(tx);
+            const tx = await this.Contract.send('approve', { from: this.account }, tradeOfferAddress.Contract[this.chainId], value);
+            return tx;
         } catch (error) {
             throw error;
         }
@@ -42,7 +42,7 @@ export default class CLAYInTheBlockchainLandWrapper {
 
     async allowance(): Promise<unknown> {
         try {
-            const allowance = await this.Contract.call('allowance', this.account, CLAYTokenAddress.Contract[this.chainId]);
+            const allowance = await this.Contract.call('allowance', this.account, tradeOfferAddress.Contract[this.chainId]);
             return allowance;
         } catch (error) {
             throw error;

@@ -1,13 +1,13 @@
 import Web3 from 'web3';
-import FishInTheBlockchainLand from './contracts/FishInTheBlockchainLand';
-import { FishTokenAddress, tradeOfferAddress } from './constants';
+import WoodToken from './contracts/WoodInTheBlockchainLand';
+import { WoodTokenAddress, tradeOfferAddress } from './constants';
 
-export default class FishInTheBlockchainLandWrapper {
+export default class WoodTokenWrapper {
     web3: Web3;
     chainId: number;
     account: string;
     wrapperOptions: any;
-    Contract: FishInTheBlockchainLand;
+    Contract: WoodToken;
 
     constructor(web3, chainId, account, options = {}) {
 
@@ -19,14 +19,14 @@ export default class FishInTheBlockchainLandWrapper {
             web3, chainId, account, ...options
         }
 
-        this.Contract = new FishInTheBlockchainLand(this.wrapperOptions, FishTokenAddress.Contract[this.chainId]);
+        this.Contract = new WoodToken(this.wrapperOptions, WoodTokenAddress.Contract[this.chainId]);
     }
 
     async balanceOf(): Promise<unknown> {
         try {
             const balance = await this.Contract.call("balanceOf", this.account);
             return balance;
-        } catch (error) { 
+        } catch (error) {
             throw error;
         }
     }

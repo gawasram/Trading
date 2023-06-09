@@ -2,8 +2,10 @@ import { createContext, useEffect, useState, useContext } from "react";
 import { Web3ModalContext } from "./Web3ModalProvider";
 import FaucetWrapper from "../blockchain/FaucetWrapper";
 import FishInTheBlockchainLandWrapper from "../blockchain/FishInTheBlockchainLandWrapper";
+import CLAYInTheBlockchainLandWrapper from "../blockchain/CLAYInTheBlockchainLandWrapper";
 import RockInTheBlockchainLandWrapper from "../blockchain/RockInTheBlockchainLandWrapper";
-import WoodInTheBlockchainLandWrapper from "../blockchain/WoodInTheBlockchainLandWrapper";
+import TokenSwapWrapper from "../blockchain/TokenSwapWrapper";
+import WoodInTheBlockchainLandWrapper from "../blockchain/WoodDInTheBlockchainLandWrapper";
 import WoodTokenWrapper from "../blockchain/WoodTokenWrapper";
 import WoolInTheBlockchainLandWrapper from "../blockchain/WoolInTheBlockchainLandWrapper";
 import tradeOfferWrapper from "../blockchain/tradeOfferWrapper"; // Import tradeOfferWrapper
@@ -12,6 +14,8 @@ interface IBlockchainContext {
   faucet: FaucetWrapper | null;
   fishInTheBlockchainLand: FishInTheBlockchainLandWrapper | null;
   rockInTheBlockchainLand: RockInTheBlockchainLandWrapper | null;
+  CLAYInTheBlockchainLand: CLAYInTheBlockchainLandWrapper | null,
+  tokenSwap: TokenSwapWrapper | null;
   woodInTheBlockchainLand: WoodInTheBlockchainLandWrapper | null;
   woodToken: WoodTokenWrapper | null;
   woolInTheBlockchainLand: WoolInTheBlockchainLandWrapper | null;
@@ -22,6 +26,8 @@ export const BlockchainContext = createContext<IBlockchainContext>({
   faucet: null,
   fishInTheBlockchainLand: null,
   rockInTheBlockchainLand: null,
+  CLAYInTheBlockchainLand: null,
+  tokenSwap: null,
   woodInTheBlockchainLand: null,
   woodToken: null,
   woolInTheBlockchainLand: null,
@@ -35,6 +41,9 @@ export const BlockchainProvider = ({ children }) => {
     useState<FishInTheBlockchainLandWrapper | null>(null);
   const [rockInTheBlockchainLand, setRockInTheBlockchainLand] =
     useState<RockInTheBlockchainLandWrapper | null>(null);
+  const [CLAYInTheBlockchainLand, setCLAYInTheBlockchainLand] = 
+    useState<CLAYInTheBlockchainLandWrapper | null>(null);
+  const [tokenSwap, setTokenSwap] = useState<TokenSwapWrapper | null>(null);
   const [woodInTheBlockchainLand, setWoodInTheBlockchainLand] =
     useState<WoodInTheBlockchainLandWrapper | null>(null);
   const [woodToken, setWoodToken] = useState<WoodTokenWrapper | null>(null);
@@ -56,6 +65,7 @@ export const BlockchainProvider = ({ children }) => {
           chainId,
           account
         );
+        const _tokenSwap = new TokenSwapWrapper(web3, chainId, account);
         const _woodInTheBlockchainLand = new WoodInTheBlockchainLandWrapper(
           web3,
           chainId,
@@ -72,6 +82,7 @@ export const BlockchainProvider = ({ children }) => {
         setFaucet(_faucet);
         setFishInTheBlockchainLand(_fishInTheBlockchainLand);
         setRockInTheBlockchainLand(_rockInTheBlockchainLand);
+        setTokenSwap(_tokenSwap);
         setWoodInTheBlockchainLand(_woodInTheBlockchainLand);
         setWoodToken(_woodToken);
         setWoolInTheBlockchainLand(_woolInTheBlockchainLand);
@@ -88,6 +99,8 @@ export const BlockchainProvider = ({ children }) => {
         faucet,
         fishInTheBlockchainLand,
         rockInTheBlockchainLand,
+        CLAYInTheBlockchainLand,
+        tokenSwap,
         woodInTheBlockchainLand,
         woodToken,
         woolInTheBlockchainLand,

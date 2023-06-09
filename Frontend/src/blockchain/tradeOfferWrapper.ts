@@ -1,15 +1,17 @@
 import Web3 from 'web3';
-import TradeOffer from './contracts/tradeOffer';
+import tradeOffer from './contracts/tradeOffer';
 import { tradeOfferAddress } from './constants';
 
-export default class TradeOfferWrapper {
+//work here
+
+export default class tradeOfferWrapper {
   web3: Web3;
   chainId: number;
   account: string;
   wrapperOptions: any;
-  Contract: TradeOffer;
+  Contract: tradeOffer;
 
-  constructor(web3, chainId, account, options = {}) {
+  constructor(web3: Web3, chainId: number, account: string, options= {}) {
 
     this.web3 = web3;
     this.chainId = chainId;
@@ -19,7 +21,7 @@ export default class TradeOfferWrapper {
       web3, chainId, account, ...options
     }
 
-    this.Contract = new TradeOffer(this.wrapperOptions, tradeOfferAddress.Contract[this.chainId]);
+    this.Contract = new tradeOffer(this.wrapperOptions, tradeOfferAddress.Contract[this.chainId]);
   }
 
   async balanceOf(): Promise<unknown> {
@@ -66,7 +68,7 @@ export default class TradeOfferWrapper {
 
   async acceptOffer(_offerId: number): Promise<unknown> {
     try {
-      const tx = await this.Contract.send("tokenOfOwnerByIndex", this.account, _offerId);
+      const tx = await this.Contract.send("acceptOffer", this.account, _offerId);
       return tx;
     } catch (error) {
       throw error;
@@ -108,12 +110,6 @@ export default class TradeOfferWrapper {
         throw error;
     }
   }
-  async initiateTrade(offerId: number): Promise<unknown> {
-    try {
-      const tx = await this.Contract.send("initiateTrade", this.account, offerId);
-      return tx;
-    } catch (error) {
-      throw error;
-    }
-  }
+
+  
 }

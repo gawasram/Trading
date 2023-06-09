@@ -35,11 +35,11 @@ async function main() {
 
   console.log("WOOL deployed to:", wool.address);
 
-  const tradeOfferFactory = await hre.ethers.getContractFactory("tradeOffer");
-  const tradeOffer = await tradeOfferFactory.deploy();
-  await tradeOffer.deployed();
+  const TokenSwap = await hre.ethers.getContractFactory("TokenSwap");
+  const tokenSwap = await TokenSwap.deploy(wood.address);
+  await tokenSwap.deployed();
 
-  console.log("tradeOffer deployed to:", tradeOffer.address);
+  console.log("TokenSwap deployed to:", tokenSwap.address);
 }
 
 main()

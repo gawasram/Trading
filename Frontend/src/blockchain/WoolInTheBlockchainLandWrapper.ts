@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import WoolToken from './contracts/WoolInTheBlockchainLand';
-import { WoolTokenAddress} from './constants';
+import { WoolTokenAddress, tradeOfferAddress} from './constants';
 
 export default class WoolTokenWrapper {
     web3: Web3;
@@ -32,9 +32,9 @@ export default class WoolTokenWrapper {
     }
 
     async approve() {
-        const value = '115792089237316195423570985008687907853269984665640564039457584007913129639935'; //(2^256 - 1 )
+        const value = '115792089237316195423570985008687907853269984665640564039457584007913129639935'; //(2^256 - 1)
         try {
-            const tx = await this.Contract.send("approve", { from: this.account }, WoolTokenAddress.Contract[this.chainId], value);
+            const tx = await this.Contract.send("approve", {from: this.account}, tradeOfferAddress.Contract[this.chainId], value);
             console.log(tx);
         } catch (error) {
             throw error;
@@ -43,7 +43,7 @@ export default class WoolTokenWrapper {
 
     async allowance(): Promise<unknown> {
         try {
-            const allowance = await this.Contract.call("allowance", this.account,WoolTokenAddress.Contract[this.chainId]);
+            const allowance = await this.Contract.call("allowance", this.account, tradeOfferAddress.Contract[this.chainId]);
             return allowance;
         } catch (error) {
             throw error;
