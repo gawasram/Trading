@@ -9,7 +9,7 @@ export default class CLAYInTheBlockchainLandWrapper {
     wrapperOptions: any;
     Contract: CLAYInTheBlockchainLand;
 
-    constructor(web3: Web3, chainId: number, account: string, options: any) {
+    constructor(web3, chainId, account, options = {}) {
         this.web3 = web3;
         this.chainId = chainId;
         this.account = account;

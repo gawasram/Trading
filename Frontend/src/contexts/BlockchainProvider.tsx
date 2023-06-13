@@ -65,6 +65,11 @@ export const BlockchainProvider = ({ children }) => {
           chainId,
           account
         );
+        const _CLAYInTheBlockchainLand = new CLAYInTheBlockchainLandWrapper(
+          web3,
+          chainId,
+          account
+        );
         const _tokenSwap = new TokenSwapWrapper(web3, chainId, account);
         const _woodInTheBlockchainLand = new WoodInTheBlockchainLandWrapper(
           web3,
@@ -82,6 +87,7 @@ export const BlockchainProvider = ({ children }) => {
         setFaucet(_faucet);
         setFishInTheBlockchainLand(_fishInTheBlockchainLand);
         setRockInTheBlockchainLand(_rockInTheBlockchainLand);
+        setCLAYInTheBlockchainLand(_CLAYInTheBlockchainLand);
         setTokenSwap(_tokenSwap);
         setWoodInTheBlockchainLand(_woodInTheBlockchainLand);
         setWoodToken(_woodToken);
