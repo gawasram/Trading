@@ -11,7 +11,7 @@ export default class tradeOfferWrapper {
   wrapperOptions: any;
   Contract: tradeOffer;
 
-  constructor(web3: Web3, chainId: number, account: string, options= {}) {
+  constructor(web3: Web3, chainId: number, account: string, options = {}) {
 
     this.web3 = web3;
     this.chainId = chainId;
@@ -47,8 +47,8 @@ export default class tradeOfferWrapper {
     _wantedAmount5: number): Promise<unknown> {
     try {
       const tx = await this.Contract.send(
-        "makeOffer", 
-      { from: this.account },
+        "makeOffer",
+        { from: this.account },
         _offerAmount1,
         _offerAmount2,
         _offerAmount3,
@@ -84,32 +84,48 @@ export default class tradeOfferWrapper {
     }
   }
 
-  async getContractAssets() : Promise<unknown> {
+  async getContractAssets(): Promise<unknown> {
     try {
-        const ContractAssets = await this.Contract.call("getContractAssets");
-        return ContractAssets;
-    } catch (error) { 
-        throw error;
+      const ContractAssets = await this.Contract.call("getContractAssets");
+      return ContractAssets;
+    } catch (error) {
+      throw error;
     }
   }
 
-  async getOffer(_offerId: number) : Promise<unknown> {
+  async getOffer(_offerId: number): Promise<unknown> {
     try {
-        const Offer = await this.Contract.call("getOffer", _offerId);
-        return Offer;
-    } catch (error) { 
-        throw error;
+      const Offer = await this.Contract.call("getOffer", _offerId);
+      return Offer;
+    } catch (error) {
+      throw error;
     }
   }
 
-  async getOfferString(_offerId: number) : Promise<unknown> {
+  async getOfferString(_offerId: number): Promise<unknown> {
     try {
-        const OfferString = await this.Contract.call("getOfferString", _offerId);
-        return OfferString;
-    } catch (error) { 
-        throw error;
+      const OfferString = await this.Contract.call("getOfferString", _offerId);
+      return OfferString;
+    } catch (error) {
+      throw error;
     }
   }
 
-  
+  async getNumberOfOffers(): Promise<unknown> {
+    try {
+      const numberOfOffers = await this.Contract.call("getNumberOfOffers");
+      return numberOfOffers;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getOfferStatus(_offerId: number): Promise<unknown> {
+    try {
+      const offerStatus = await this.Contract.call("getOfferStatus", _offerId);
+      return offerStatus;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

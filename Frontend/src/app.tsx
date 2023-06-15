@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 import "./app.css";
 import { Web3ModalContext } from "./contexts/Web3ModalProvider";
 import { BlockchainContext } from "./contexts/BlockchainProvider";
+import userEvent from "@testing-library/user-event";
 
 type TradeOffer = {
   offerId: number;
@@ -30,10 +31,6 @@ interface Offer {
   time: string; // Time field
 }
 
-// let tokenAmounts: number[] = new Array(10);
-// let OfferSubmitted: boolean = false;
-
-
 const App: React.FC = () => {
   // Accessing the Web3ModalContext
   const { web3, account, connect, disconnect, signer, chainId } = React.useContext(
@@ -61,6 +58,25 @@ const App: React.FC = () => {
   const [woolAllowance, setWoolAllowance] = useState("");
   const [fishAllowance, setFishAllowance] = useState("");
 
+  //available Offers data
+  const [numberOfOffers, setNumberOfOffers] = useState(0);
+  const [offerStatus, setOfferStatus] = useState("");
+  const [offerString, setOfferString] = useState("");
+  const [offerId, setOfferId] = useState(0);
+
+  const getNumberOfOffers =async () => {
+    if (web3 && account && chainId) {
+      const _numberOfOffers = await tradeOfferWrapper?.getNumberOfOffers();
+      setNumberOfOffers(Number(_numberOfOffers));
+    }
+  }
+
+  useEffect(() => {
+    getNumberOfOffers();
+    console.log(numberOfOffers);
+  });
+
+
   const [tokenAmounts, setTokenAmounts] = useState(Array(10).fill(undefined));
   const [tokensOfferedData, setTokensOfferedData] = useState(Array(5).fill(undefined));
   const [tokensWantedData, setTokensWantedData] = useState(Array(5).fill(undefined));
@@ -72,14 +88,11 @@ const App: React.FC = () => {
     FISH: false
   })
 
-  const [OfferSubmitted, setOfferSubmit] = useState(false);
   const condition1Ref = useRef<boolean>(false);
   const condition2Ref = useRef<boolean>(false);
   const condition3Ref = useRef<boolean>(false);
   const condition4Ref = useRef<boolean>(false);
   const condition5Ref = useRef<boolean>(false);
-
-  const [approveStep, setApproveStep] = useState(0);
 
   const [buttonName, setButtonName] = useState("Submit Offer");
 
@@ -118,10 +131,6 @@ const App: React.FC = () => {
 
   // State for open offers
   const [openOffers, setOpenOffers] = useState<Offer[]>([]);
-  // const tokensWantedData = Array(5);
-  // const tokensOfferedData = Array(5);
-
-
 
   useEffect(() => {
     getTokenAllowance();
@@ -137,7 +146,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const tempTokenAmounts = [...tokenAmounts];
-    // console.log(tempTokenAmounts);
     if (tempTokenAmounts[0] > 0 && woodAllowance === "0") {
       condition1Ref.current = true;
     }
@@ -153,38 +161,33 @@ const App: React.FC = () => {
     if (tempTokenAmounts[4] > 0 && fishAllowance === "0") {
       condition5Ref.current = true;
     }
-    // console.log(condition1Ref);
-    // console.log(condition2Ref);
-    // console.log(condition3Ref);
-    // console.log(condition4Ref);
-    // console.log(condition5Ref);
-    // console.log(tempTokenAmounts);
+
   }, [tokenAmounts, tempTokenAmounts, woodAllowance, rockAllowance, clayAllowance, woolAllowance, fishAllowance]);
 
 
-// Declare counter states for each button
-const [counterWanted, setCounterWanted] = useState(0);
-const [counterOffered, setCounterOffered] = useState(0);
+  // Declare counter states for each button
+  const [counterWanted, setCounterWanted] = useState(0);
+  const [counterOffered, setCounterOffered] = useState(0);
 
-// Function to add a new token to the tokensOffered state
-const handleAddTokenOffered = () => {
-  if (counterOffered < 4) {
-    const newToken = { id: tokensOffered.length + 1, token: "", amount: 0 };
-    setTokensOffered([...tokensOffered, newToken]);
-    setCounterOffered(counterOffered + 1);
-    console.log(newToken);
-  }
-};
+  // Function to add a new token to the tokensOffered state
+  const handleAddTokenOffered = () => {
+    if (counterOffered < 4) {
+      const newToken = { id: tokensOffered.length + 1, token: "", amount: 0 };
+      setTokensOffered([...tokensOffered, newToken]);
+      setCounterOffered(counterOffered + 1);
+      console.log(newToken);
+    }
+  };
 
-// Function to add a new token to the tokensWanted state
-const handleAddTokenWanted = () => {
-  if (counterWanted < 4) {
-    const newToken = { id: tokensWanted.length + 1, token: "", amount: 0 };
-    setTokensWanted([...tokensWanted, newToken]);
-    setCounterWanted(counterWanted + 1);
-    console.log({ newToken, tokensWanted });
-  }
-};
+  // Function to add a new token to the tokensWanted state
+  const handleAddTokenWanted = () => {
+    if (counterWanted < 4) {
+      const newToken = { id: tokensWanted.length + 1, token: "", amount: 0 };
+      setTokensWanted([...tokensWanted, newToken]);
+      setCounterWanted(counterWanted + 1);
+      console.log({ newToken, tokensWanted });
+    }
+  };
 
 
   // Function to handle changes in the tokensOffered state
@@ -197,7 +200,6 @@ const handleAddTokenWanted = () => {
       token.id === id ? { ...token, [field]: value } : token
     );
     setTokensOffered(updatedTokens);
-    // console.log(updatedTokens);
 
   };
 
@@ -228,16 +230,6 @@ const handleAddTokenWanted = () => {
     }
     changeButtonName()
     createOrderedArray();
-    // setOfferSubmit(true);
-    // console.log(tokensOffered);
-    // console.log(tokensWanted);
-
-    // console.log(condition1Ref);
-    // console.log(condition2Ref);
-    // console.log(condition3Ref);
-    // console.log(condition4Ref);
-    // console.log(condition5Ref);
-    // console.log(tempTokenAmounts);
 
   }, [web3, account, tokensOffered, tokensWanted])
 
@@ -301,41 +293,32 @@ const handleAddTokenWanted = () => {
       } else if (tokensWanted[i].token === "FISH") {
         newWantedData[4] = tokensWanted[i].amount;
       }
-      // console.log(newWantedData);
     }
 
     setTokensWantedData(newWantedData);
-    // console.log(tokensWantedData)
 
     const newTokenAmounts = Array(10).fill(undefined);
 
     for (let i = 0; i < newOfferedData.length; i++) {
       newTokenAmounts[i] = newOfferedData[i]
-      // console.log(tokenAmounts);
     }
 
 
     for (let i = 0; i < newWantedData.length; i++) {
       newTokenAmounts[i + 5] = newWantedData[i]
-      // console.log(tokenAmounts);
     }
 
     for (let i = 0; i < 10; i++) {
       if (typeof newTokenAmounts[i] === "undefined") {
         newTokenAmounts[i] = 0;
-        // console.log(tokenAmounts);
       }
     }
     setTokenAmounts(newTokenAmounts);
-    // console.log(newTokenAmounts);
 
-    // console.log(tempTokenAmounts);
-    // console.log(tokenAmounts);
 
 
 
     const tokenAmountsTuple = tokenAmounts as [number, number, number, number, number, number, number, number, number, number];
-    // console.log(tokenAmountsTuple);
 
 
   }
@@ -385,11 +368,8 @@ const handleAddTokenWanted = () => {
         tokensWantedData[4] = tokensWanted[i].amount;
       }
     }
-    // console.log(tokensWantedData);
 
 
-    // console.log(tokensOfferedData)
-    // console.log(tokensWantedData)
 
     for (let i = 0; i < tokensOfferedData.length; i++) {
       tokenAmounts[i] = tokensOfferedData[i]
@@ -408,7 +388,6 @@ const handleAddTokenWanted = () => {
     console.log(tokenAmounts);
 
     const tokenAmountsTuple = tokenAmounts as [number, number, number, number, number, number, number, number, number, number];
-    // console.log(tokenAmountsTuple);
 
     if (web3 && account && chainId) {
       tradeOfferWrapper
@@ -444,7 +423,7 @@ const handleAddTokenWanted = () => {
     // Reset the form after submission
     setTokensOffered([{ id: 1, token: "", amount: 0 }]);
     setTokensWanted([{ id: 1, token: "", amount: 0 }]);
-    setButtonName('')
+    setButtonName('Creating Offer')
   }, [web3, account, tokensOffered, tokensWanted, tradeOfferWrapper]);
 
   // Function to connect to XDCPay
@@ -465,6 +444,7 @@ const handleAddTokenWanted = () => {
     if (web3 && account && chainId) {
 
       if (tokenAmounts[0] > 0) {
+        if (woodAllowance === "0") {
         WoodInTheBlockchainLandWrapper
           ?.approve()
           .then(() => {
@@ -473,6 +453,13 @@ const handleAddTokenWanted = () => {
               return { ...prevState, WOOD: true }
             })
           })
+        }
+        else {
+          alert(" Wood Approved!");
+            setIsApproved(prevState => {
+              return { ...prevState, WOOD: true }
+            })
+        }
       }
     }
   }
@@ -480,66 +467,91 @@ const handleAddTokenWanted = () => {
   const handleApproveRock = () => {
     if (web3 && account && chainId) {
       if (tokenAmounts[1] > 0) {
-        RockInTheBlockchainLandWrapper
-          ?.approve()
-          .then(() => {
-            alert(" Rock Approved!");
-            setIsApproved(prevState => {
-              return { ...prevState, ROCK: true }
-            })
-
-          })
+        if (rockAllowance === "0") {
+          RockInTheBlockchainLandWrapper
+            ?.approve()
+            .then(() => {
+              alert("Rock Approved!");
+              setIsApproved(prevState => {
+                return { ...prevState, ROCK: true };
+              });
+            });
+        } else {
+          alert("Rock Approved!");
+          setIsApproved(prevState => {
+            return { ...prevState, ROCK: true };
+          });
+        }
       }
     }
-
-  }
-
+  };
+  
   const handleApproveClay = () => {
     if (web3 && account && chainId) {
       if (tokenAmounts[2] > 0) {
-        CLAYInTheBlockchainLandWrapper
-          ?.approve()
-          .then(() => {
-            alert(" Clay Approved!");
-            setIsApproved(prevState => {
-              return { ...prevState, CLAY: true }
-            })
-
-          })
+        if (clayAllowance === "0") {
+          CLAYInTheBlockchainLandWrapper
+            ?.approve()
+            .then(() => {
+              alert("Clay Approved!");
+              setIsApproved(prevState => {
+                return { ...prevState, CLAY: true };
+              });
+            });
+        } else {
+          alert("Clay Approved!");
+          setIsApproved(prevState => {
+            return { ...prevState, CLAY: true };
+          });
+        }
       }
     }
-
-  }
-
+  };
+  
   const handleApproveWool = () => {
     if (web3 && account && chainId) {
       if (tokenAmounts[3] > 0) {
-        WoolInTheBlockchainLandWrapper
-          ?.approve()
-          .then(() => {
-            alert(" Wool Approved!");
-            setIsApproved(prevState => {
-              return { ...prevState, WOOL: true }
-            })
-          })
+        if (woolAllowance === "0") {
+          WoolInTheBlockchainLandWrapper
+            ?.approve()
+            .then(() => {
+              alert("Wool Approved!");
+              setIsApproved(prevState => {
+                return { ...prevState, WOOL: true };
+              });
+            });
+        } else {
+          alert("Wool Approved!");
+          setIsApproved(prevState => {
+            return { ...prevState, WOOL: true };
+          });
+        }
       }
     }
-  }
-
+  };
+  
   const handleApproveFish = () => {
     if (web3 && account && chainId) {
       if (tokenAmounts[4] > 0) {
-        FishInTheBlockchainLandWrapper
-          ?.approve()
-          .then(() => {
-            alert(" Fish Approved!");
-            setIsApproved(prevState => {
-              return { ...prevState, FISH: true }
-            })
-          })
+        if (fishAllowance === "0") {
+          FishInTheBlockchainLandWrapper
+            ?.approve()
+            .then(() => {
+              alert("Fish Approved!");
+              setIsApproved(prevState => {
+                return { ...prevState, FISH: true };
+              });
+            });
+        } else {
+          alert("Fish Approved!");
+          setIsApproved(prevState => {
+            return { ...prevState, FISH: true };
+          });
+        }
       }
     }
-  }
+  };
+  
 
   // Function to initiate the trade
   const initiateTrade = useCallback(
@@ -566,7 +578,6 @@ const handleAddTokenWanted = () => {
         const signature = await signer.sign("Hello, World!");
 
         // Perform any necessary UI updates or display a success message to the user
-        // console.log("Trade initiated successfully");
       } catch (error) {
         // Handle errors
         console.error("Error initiating trade:", error);
@@ -586,132 +597,118 @@ const handleAddTokenWanted = () => {
         )}
       </div>
       <div className="container">
-       {/* Open Offers */}
-       <div className="open-offers">
-        <h2>Marketplace Offers (List of Open Offers)</h2>
-        {openOffers.length > 0 ? (
-          <ul>
-            {openOffers.map((offer) => (
-              <li key={offer.id}>
-                <strong>Offer #{offer.id}</strong>
-                <p>
-                  Tokens Offered: {offer.tokensOffered
-                    .map((token) => `${token.amount} ${token.token}`)
-                    .join(", ")}
-                </p>
-                <p>
-                  Tokens Wanted: {offer.tokensWanted
-                    .map((token) => `${token.amount} ${token.token}`)
-                    .join(", ")}
-                </p>
-                <p>Status: {offer.status}</p>
-                <p>Creator: {offer.creator}</p>
-                <p>Date: {offer.date}</p>
-                <p>Time: {offer.time}</p>
-                <button onClick={() => initiateTrade(offer.id)}>TRADE</button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No open offers available.</p>
-        )}
-      </div>
-
-      {/* Tokens Offered */}
-      <div>
-      {tokensOffered.map((token) => (
-        <div key={token.id} className="token-wrapper">
-          <h3>Amount</h3>
-          <input
-            type="number"
-            value={token.amount}
-            onChange={(e) =>
-              handleTokenOfferedChange(token.id, "amount", e.target.value)
-            }
-          />
-          <h3>Tokens Offered</h3>
-          <select
-            value={token.token}
-            onChange={(e) =>
-              handleTokenOfferedChange(token.id, "token", e.target.value)
-            }
-          >
-            <option value="">Select Token</option>
-            <option value="WOOD">WOOD</option>
-            <option value="ROCK">ROCK</option>
-            <option value="CLAY">CLAY</option>
-            <option value="WOOL">WOOL</option>
-            <option value="FISH">FISH</option>
-          </select>
+        {/* Open Offers */}
+        <div className="open-offers">
+          <h2>Marketplace Offers (List of Open Offers)</h2>
+          {openOffers.length > 0 ? (
+            <ul>
+              {openOffers.map((offer) => (
+                <li key={offer.id}>
+                  <strong>Offer #{offer.id}</strong>
+                  <p>
+                    Tokens Offered: {offer.tokensOffered
+                      .map((token) => `${token.amount} ${token.token}`)
+                      .join(", ")}
+                  </p>
+                  <p>
+                    Tokens Wanted: {offer.tokensWanted
+                      .map((token) => `${token.amount} ${token.token}`)
+                      .join(", ")}
+                  </p>
+                  <p>Status: {offer.status}</p>
+                  <p>Creator: {offer.creator}</p>
+                  <p>Date: {offer.date}</p>
+                  <p>Time: {offer.time}</p>
+                  <button onClick={() => initiateTrade(offer.id)}>TRADE</button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No open offers available.</p>
+          )}
         </div>
-      ))}
 
-      <button onClick={handleAddTokenOffered}>Add Another</button>
+        {/* Tokens Offered */}
+        <div>
+          {tokensOffered.map((token) => (
+            <div key={token.id} className="token-wrapper">
+              <h3>Amount</h3>
+              <input
+                type="number"
+                value={token.amount}
+                onChange={(e) =>
+                  handleTokenOfferedChange(token.id, "amount", e.target.value)
+                }
+              />
+              <h3>Tokens Offered</h3>
+              <select
+                value={token.token}
+                onChange={(e) =>
+                  handleTokenOfferedChange(token.id, "token", e.target.value)
+                }
+              >
+                <option value="">Select Token</option>
+                <option value="WOOD">WOOD</option>
+                <option value="ROCK">ROCK</option>
+                <option value="CLAY">CLAY</option>
+                <option value="WOOL">WOOL</option>
+                <option value="FISH">FISH</option>
+              </select>
+            </div>
+          ))}
 
-      {/* Tokens Wanted */}
-      {tokensWanted.map((token) => (
-        <div key={token.id} className="token-wrapper">
-          <h3>Amount</h3>
-          <input
-            type="number"
-            value={token.amount}
-            onChange={(e) =>
-              handleTokenWantedChange(token.id, "amount", e.target.value)
-            }
-          />
-          <h3>Tokens Wanted</h3>
-          <select
-            value={token.token}
-            onChange={(e) =>
-              handleTokenWantedChange(token.id, "token", e.target.value)
-            }
-          >
-            <option value="">Select Token</option>
-            <option value="WOOD">WOOD</option>
-            <option value="ROCK">ROCK</option>
-            <option value="CLAY">CLAY</option>
-            <option value="WOOL">WOOL</option>
-            <option value="FISH">FISH</option>
-          </select>
+          <button onClick={handleAddTokenOffered}>Add Another</button>
+
+          {/* Tokens Wanted */}
+          {tokensWanted.map((token) => (
+            <div key={token.id} className="token-wrapper">
+              <h3>Amount</h3>
+              <input
+                type="number"
+                value={token.amount}
+                onChange={(e) =>
+                  handleTokenWantedChange(token.id, "amount", e.target.value)
+                }
+              />
+              <h3>Tokens Wanted</h3>
+              <select
+                value={token.token}
+                onChange={(e) =>
+                  handleTokenWantedChange(token.id, "token", e.target.value)
+                }
+              >
+                <option value="">Select Token</option>
+                <option value="WOOD">WOOD</option>
+                <option value="ROCK">ROCK</option>
+                <option value="CLAY">CLAY</option>
+                <option value="WOOL">WOOL</option>
+                <option value="FISH">FISH</option>
+              </select>
+            </div>
+          ))}
+
+          <button onClick={handleAddTokenWanted}>Add Another</button>
+
+          <div>
+            <button id="create-offer" onClick={() => {
+              buttonName === "Create Offer" ? handleCreateOffer() :
+                buttonName === 'Submit Offer' ? handleSubmitOffer() :
+                  buttonName === 'Approve WOOD' ? handleApproveWood() :
+                    buttonName === 'Approve ROCK' ? handleApproveRock() :
+                      buttonName === 'Approve CLAY' ? handleApproveClay() :
+                        buttonName === 'Approve WOOL' ? handleApproveWool() :
+                          buttonName === 'Approve FISH' ? handleApproveFish() :
+                            console.log("")
+            }}
+            >
+              {buttonName}
+            </button>
+
+
+
+
+          </div>
         </div>
-      ))}
-
-      <button onClick={handleAddTokenWanted}>Add Another</button>
-
-      {/* Create Offer button
-      <button id="create-offer" onClick={handleSubmit}>
-        CREATE OFFER TO TRADE
-      </button> */}
-
-      {/* {(tokenAmounts[0] > 0)? (
-        <button id="create-offer" onClick={handleApproveWood}>
-          APPROVE WOOD
-        </button>
-      ) : (
-        <button id="create-offer" onClick={handleSubmit}>
-          CREATE OFFER TO TRADE
-        </button>
-      )} */}
-<div>
-      <button id="create-offer" onClick={() => {
-        buttonName === "Create Offer" ? handleCreateOffer() :
-          buttonName === 'Submit Offer' ? handleSubmitOffer() :
-            buttonName === 'Approve WOOD' ? handleApproveWood() :
-              buttonName === 'Approve ROCK' ? handleApproveRock() :
-                buttonName === 'Approve CLAY' ? handleApproveClay() :
-                  buttonName === 'Approve WOOL' ? handleApproveWool() :
-                    buttonName === 'Approve FISH' ? handleApproveFish() :
-                      console.log("")
-      }}
-      >
-        {buttonName}
-      </button>
-
-
-
-
-      </div>
-      </div>
       </div>
     </main>
   );
