@@ -128,4 +128,13 @@ export default class tradeOfferWrapper {
       throw error;
     }
   }
+
+  async getOfferCreator(_offerId: number): Promise<unknown> {
+    try {
+      const offerCreator = await this.Contract.call("getOfferCreator", _offerId);
+      return offerCreator;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
