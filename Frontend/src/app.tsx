@@ -4,16 +4,6 @@ import { Web3ModalContext } from "./contexts/Web3ModalProvider";
 import { BlockchainContext } from "./contexts/BlockchainProvider";
 import { HashLoader } from "react-spinners";
 
-interface Offer {
-  id: number;
-  tokensOffered: { id: number; token: string; amount: number }[];
-  tokensWanted: { id: number; token: string; amount: number }[];
-  status: string;
-  creator: string | null;
-  date: string; // Date field
-  time: string; // Time field
-}
-
 interface QuerriedOffer {
   id: number;
   offerString: string | null;
@@ -54,6 +44,7 @@ const App: React.FC = () => {
 
   //available Offers data
   const [numberOfOffers, setNumberOfOffers] = useState(0);
+  const [offersNumber, setoffersNumber] = useState(0);
 
   const [offerStatus, setOfferStatus] = useState<string>('');
   const [offerString, setOfferString] = useState<string>('');
@@ -85,17 +76,25 @@ const App: React.FC = () => {
         let newOffer: QuerriedOffer = {
           id: i + 1,
           offerString: offerStringArray[i+1],
-          offerCrreator: offerCreator,
+          offerCrreator: offerCreatorArray[i+1],
           date: "",
           time: "",
         };
-
+        // console.log(offerStringArray);
         setQuerriedOffers((prevState) => [...prevState, newOffer]);
       }
     } catch (error) {
       console.error("Error fetching offer info:", error);
     }
-  }, [numberOfOffers]);
+  }, [offersNumber]);
+
+  useEffect (() => {
+    // console.log(offerStringArray.length);    
+    if (offerStringArray.length > numberOfOffers) {
+      setoffersNumber(numberOfOffers);
+      // console.log(offersNumber);
+    }
+  },[offerStringArray])
 
   useEffect(() => {
     for (let i = 0; i < numberOfOffers; i++) {
@@ -108,15 +107,18 @@ const App: React.FC = () => {
       const newOfferStatusArray = [...prevState];
       newOfferStatusArray.push(String(Boolean(offerStatus)));
       return newOfferStatusArray;
+      console.log(offerCreatorArray);
     });    
   },[offerStatus])
 
   useEffect (() =>{
-    setOfferStringArray((prevState) => {
+    if (offerStringArray.length < numberOfOffers + 1) 
+      {setOfferStringArray((prevState) => {
       const newOfferStringArray = [...prevState];
       newOfferStringArray.push(String(offerString));
       return newOfferStringArray;
-    });    
+    });
+  }
   },[offerString])
 
   useEffect (() =>{
@@ -140,7 +142,7 @@ const App: React.FC = () => {
   }, [offerCreatorArray]);
 
   useEffect(() => {
-    console.log(offerStringArray);
+    // console.log(offerStringArray);
   }, [offerStringArray]);
 
   useEffect(() => {
@@ -216,7 +218,6 @@ const App: React.FC = () => {
   ]);
 
 
-  const [openOffers, setOpenOffers] = useState<Offer[]>([]);
 
   useEffect(() => {
     getTokenAllowance();
@@ -662,11 +663,11 @@ const App: React.FC = () => {
                 .filter((offer) => typeof offer === "object" && offer !== null) // Filter out inconsistent elements
                 .map((offer) => (
                   <li key={offer.id}>
-                    <strong>Offer #{offer.id}</strong>
-                    <p>OfferString: {offer.offerString}</p>
-                    <p>Creator: {offer.offerCrreator}</p>
-                    <p>Date: {offer.date}</p>
-                    <p>Time: {offer.time}</p>
+                    <strong>Offer Id: {offer.id}</strong>
+                    <p>{offer.offerString}</p>
+                    <p>Your Offer: {offer.offerCrreator}</p>
+                    {/* <p>Date: {offer.date}</p>
+                    <p>Time: {offer.time}</p> */}
                     <button onClick={() => handleSubmitOffer()}>TRADE</button>
                   </li>
                 ))}
