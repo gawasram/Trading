@@ -137,4 +137,14 @@ export default class tradeOfferWrapper {
       throw error;
     }
   }
+
+  async cancelOffer(_offerId: number): Promise<unknown> {
+    try {
+      const tx = await this.Contract.send("cancelOffer", this.account, _offerId);
+      return tx;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
 }

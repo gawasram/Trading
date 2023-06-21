@@ -609,6 +609,19 @@ const App: React.FC = () => {
     }
   };
 
+  const cancelOffer = async (offerId: number) => {
+    try {
+      await tradeOfferWrapper?.cancelOffer(offerId);
+      // Refresh the offer information after cancellation
+      await getNumberOfOffers();
+      setQuerriedOffers([]);
+      fetchOfferInfo();
+    } catch (error) {
+      console.error("Error canceling offer:", error);
+    }
+  };
+  
+
 
   // Function to initiate the trade
   // const initiateTrade = useCallback(
@@ -755,6 +768,16 @@ const App: React.FC = () => {
                 {buttonName}
               </button>
             }
+                          {querriedOffers.map((offer) => (
+                <div key={offer.id}>
+                  <p>Offer ID: {offer.id}</p>
+                  <p>Offer String: {offer.offerString}</p>
+                  <p>Offer Creator: {offer.offerCreator}</p>
+                  {/* Add the cancelOffer button */}
+                  <button onClick={() => cancelOffer(offer.id)}>Cancel Offer</button>
+                </div>
+              ))}
+
           </div>
         </div>
       </div>
