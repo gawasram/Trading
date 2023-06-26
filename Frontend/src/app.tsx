@@ -80,19 +80,50 @@ const App: React.FC = () => {
 
   //declare marketplace button name array
   const [marketplaceButtonName, setMarketplaceButtonName] = useState<string[]>([]);
-  
+  const [offerToAccept, setOfferToAccept] = useState<string[]>([""]);
+
+  const [undefinedCounter, setUndefinedCounter] = useState(0);
+
+  const [currentOfferToAccept, setCurrentOfferToAccept] = useState<string[]>([]);
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     getStringInfo();
+  //     getStatusInfo();
+  //     getCreatorInfo();
+  //     console.log("run");
+
+  //   }, 1000);
+
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   if(offerCreatorArray[0] === undefined) {
+  //     if (undefinedCounter === 0) {
+  //       setUndefinedCounter(undefinedCounter + 1);
+  // //     } else {
+  //       window.location.reload();
+  //     }
+  //   }
+  //   console.log(offerCreatorArray[0] === "undefined");
+  //   console.log(offerCreatorArray[0]);
+  //   console.log(undefinedCounter === 0);
+  //   console.log(undefinedCounter);
+
+  // }, [offerCreatorArray])
+
   useEffect(() => {
     getStringInfo();
-  });
-  useEffect(() => {
     getStatusInfo();
-  });
-  useEffect(() => {
     getCreatorInfo();
   });
 
   useEffect(() => {
     getTokenAllowance();
+    getNumberOfOffers();
   });
 
   useEffect(() => {
@@ -118,26 +149,45 @@ const App: React.FC = () => {
     }
   }
 
-  // const getNumberOfOffers = async () => {
-  //   if (web3 && account && chainId) {
-  //     const _numberOfOffers = await tradeOfferWrapper?.getNumberOfOffers();
-  //     if (Number(_numberOfOffers) > 0) {
-  //       setNumberOfOffers(Number(_numberOfOffers));
-  //     }
-  //     else {
-  //       setNumberOfOffers(0);
-  //     }
-  //   }
-  // }
+  const getNumberOfOffers = async () => {
+    if (web3 && account && chainId) {
+      const _numberOfOffers = await tradeOfferWrapper?.getNumberOfOffers();
+      if (Number(_numberOfOffers) > 0) {
+        setNumberOfOffers(Number(_numberOfOffers));
+      }
+      else {
+        setNumberOfOffers(0);
+      }
+    }
+  }
 
-  const fetchOfferInfo = useCallback(async () => {
-    //console.log(offerStringArray[0] != undefined)
-    //console.log(offerStringArray[0] != "")
-    //console.log(offerStringArray[0] != undefined && offerStringArray[0] != "")
-    if (offerStringArray[0] != undefined && offerStringArray[0] != "" && offerStringArray[0] != "undefined") {
+  useEffect(() => {
+    if (offerStatusArray[0] === "undefined" || offerStatusArray[0] === "") {
+      getStatusInfo();
+      console.log(offerStatusArray[0])
+    }
+  }, [offerStatusArray]);
+
+  useEffect(() => {
+    if (offerStringArray[0] === "undefined" || offerStringArray[0] === "") {
+      getStringInfo();
+      console.log(offerStringArray[0])
+    }
+  }, [offerStatusArray])
+  useEffect(() => {
+    if (offerCreatorArray[0] === "undefined" || offerCreatorArray[0] === "") {
+      getCreatorInfo();
+      console.log(offerCreatorArray[0])
+    }
+  }, [offerCreatorArray])
+
+
+  useEffect(() => {
+    if (offerStatusArray[0] != "undefined" && offerCreatorArray[0] != "undefined" && offerStringArray[0] != "undefined") {
       try {
+        // let counter = 0;
         for (let i = 0; i < offerStringArray.length; i++) {
-          if (offerStatusArray[i] != "false") {
+          if (offerStatusArray[i] === "true") {
             let newOffer: QuerriedOffer = {
               id: i + 1,
               offerString: offerStringArray[i],
@@ -148,12 +198,25 @@ const App: React.FC = () => {
             setQuerriedOffers((prevState) => [...prevState, newOffer]);
             //console.log(offerStringArray[i])
           }
+          counter++;
         }
+        // console.log(counter);
+        // console.log(offerStatusArray[0] === "")
+        // console.log(offerStatusArray[0] === undefined)
+        // console.log(offerStatusArray.length);
+
+
+        // if ((offerStatusArray[0] === "" || offerStatusArray[0] === undefined) && (offerStatusArray.length < 2)) {
+        //   if (counter != numberOfOffers) {
+        //     window.location.reload();
+        //   }
+        // }
       } catch (error) {
         console.error("Error fetching offer info:", error);
       }
     }
-  }, [offerStringArray]);
+  }, [offerStatusArray]);
+
 
   const getStringInfo = async () => {
     try {
@@ -174,10 +237,10 @@ const App: React.FC = () => {
       if (web3 && account && chainId) {
         const _offerStatus = await tradeOfferWrapper?.getOfferStatusArray();
         // setOfferStatusArray((String(_offerStatus)).split(","));
-        if (_offerStatus != offerStatus) {
+        if (String(_offerStatus) != offerStatus) {
           setOfferStatus(String(_offerStatus));
         }
-        console.log(String(_offerStatus));
+        // console.log(String(_offerStatus));
       }
     } catch (error) {
       console.error("Error fetching offer info:", error);
@@ -188,7 +251,7 @@ const App: React.FC = () => {
     try {
       if (web3 && account && chainId) {
         const _offerCreator = await tradeOfferWrapper?.getOfferCreatorsArray();
-        if (_offerCreator != offerCreator) {
+        if (String(_offerCreator) != offerCreator) {
           setofferCreator(String(_offerCreator));
         }
         // console.log(_offerCreator);
@@ -197,6 +260,21 @@ const App: React.FC = () => {
       console.error("Error fetching offer info:", error);
     }
   };
+  useEffect(() => {
+    const newOfferStatusArray = offerStatus.split(",");
+    setOfferStatusArray(newOfferStatusArray);
+    // setOfferStatusTest(offerStatus)
+  }, [offerStatus])
+
+  useEffect(() => {
+    const newOfferStringArray = offerString.split(",");
+    setOfferStringArray(newOfferStringArray);
+  }, [offerString])
+
+  useEffect(() => {
+    const newOfferCreatorsArray = offerCreator.split(",");
+    setOfferCreatorArray(newOfferCreatorsArray);
+  }, [offerStatus])
 
 
   // Function to add a new token to the tokensOffered state
@@ -263,11 +341,11 @@ const App: React.FC = () => {
 
   }, [web3, account, tokensOffered, tokensWanted]);
 
-  const handleApproveWood = () => {
+  const handleApproveWood = (flag: boolean) => {
     // if (web3 && account && chainId) {
 
     if (tokenAmounts[0] > 0) {
-      if (woodAllowance === "0") {
+      if (woodAllowance === "0" || flag) {
         setLoading(true);
         WoodInTheBlockchainLandWrapper
           ?.approve()
@@ -288,10 +366,10 @@ const App: React.FC = () => {
     }
   }
 
-  const handleApproveRock = () => {
+  const handleApproveRock = (flag: boolean) => {
     if (web3 && account && chainId) {
       if (tokenAmounts[1] > 0) {
-        if (rockAllowance === "0") {
+        if (rockAllowance === "0" || flag) {
           setLoading(true);
           RockInTheBlockchainLandWrapper
             ?.approve()
@@ -312,9 +390,11 @@ const App: React.FC = () => {
     }
   };
 
-  const handleApproveClay = () => {
+  const handleApproveClay = (flag: boolean) => {
     if (web3 && account && chainId) {
-      if (tokenAmounts[2] > 0) {
+      console.log(offerToAccept);
+
+      if (tokenAmounts[2] > 0 || flag) {
         if (clayAllowance === "0") {
           setLoading(true);
           CLAYInTheBlockchainLandWrapper
@@ -336,10 +416,10 @@ const App: React.FC = () => {
     }
   };
 
-  const handleApproveWool = () => {
+  const handleApproveWool = (flag: boolean) => {
     if (web3 && account && chainId) {
       if (tokenAmounts[3] > 0) {
-        if (woolAllowance === "0") {
+        if (woolAllowance === "0" || flag) {
           setLoading(true);
           WoolInTheBlockchainLandWrapper
             ?.approve()
@@ -360,10 +440,10 @@ const App: React.FC = () => {
     }
   };
 
-  const handleApproveFish = () => {
+  const handleApproveFish = (flag: boolean) => {
     if (web3 && account && chainId) {
       if (tokenAmounts[4] > 0) {
-        if (fishAllowance === "0") {
+        if (fishAllowance === "0" || flag) {
           setLoading(true);
           FishInTheBlockchainLandWrapper
             ?.approve()
@@ -388,25 +468,10 @@ const App: React.FC = () => {
   //   getOfferInfo();
   // }, [numberOfOffers]);
 
-  useEffect(() => {
-    const newOfferStatusArray = offerStatus.split(",");
-    setOfferStatusArray(newOfferStatusArray);
-    // setOfferStatusTest(offerStatus)
-  }, [offerStatus])
 
-  useEffect(() => {
-    const newOfferStringArray = offerString.split(",");
-    setOfferStringArray(newOfferStringArray);
-  }, [offerString])
-
-  useEffect(() => {
-    const newOfferCreatorsArray = offerCreator.split(",");
-    setOfferCreatorArray(newOfferCreatorsArray);
-  }, [offerStatus])
-
-  useEffect(() => {
-    fetchOfferInfo();
-  }, [fetchOfferInfo]);
+  // useEffect(() => {
+  //   fetchOfferInfo();
+  // }, [fetchOfferInfo]);
 
   useEffect(() => {
     // console.log(querriedOffers);
@@ -446,12 +511,13 @@ const App: React.FC = () => {
 
   useEffect(() => {
     for (let i = 0; i < offerCreatorArray.length; i++) {
-      if (offerStatusArray[i] === "true")  
-        {if (offerCreatorArray[i] === "true") {
+      if (offerStatusArray[i] === "true") {
+        if (offerCreatorArray[i] === "true") {
           setMarketplaceButtonName(prevState => [...prevState, 'Cancel Offer']);
         } else {
           setMarketplaceButtonName(prevState => [...prevState, 'Accept Offer']);
-        }}
+        }
+      }
     }
   }, [offerCreatorArray])
 
@@ -461,14 +527,14 @@ const App: React.FC = () => {
 
   let counter = 0;
 
-  useEffect(() => {
-    if ((counter === 0) && (offerStatusArray[0] === "undefined" || offerStatusArray[0] === "" || offerStatusArray[0] === undefined )) {
-      counter ++;
-    } else if (counter ===1 && (offerStatusArray[0] === "undefined" || offerStatusArray[0] === "" || offerStatusArray[0] === undefined )) {
-      window.location.reload();
-    }
-    console.log(offerStatusArray[0]);    
-  }, [offerStatusArray])
+  // useEffect(() => {
+  //   if ((counter === 0) && (offerStatusArray[0] === "undefined" || offerStatusArray[0] === "" || offerStatusArray[0] === undefined )) {
+  //     counter ++;
+  //   } else if (counter ===1 && (offerStatusArray[0] === "undefined" || offerStatusArray[0] === "" || offerStatusArray[0] === undefined )) {
+  //     window.location.reload();
+  //   }
+  //   console.log(offerStatusArray[0]);    
+  // }, [offerStatusArray])
 
   const createOrderedArray = () => {
     // Create an array to store the ordered Offered tokens
@@ -628,6 +694,146 @@ const App: React.FC = () => {
 
   }, [web3, account, tokensOffered, tokensWanted, tradeOfferWrapper]);
 
+  const handleCancelOffer = (async (_offerId: number) => {
+    if (web3 && account && chainId) {
+      setLoading(true);
+      tradeOfferWrapper?.withdraw(_offerId - 1)
+        .then(() => {
+          alert("Offer cancelled successfully!");
+        })
+        .then(() => {
+          setLoading(false);
+          window.location.reload();
+        })
+        .catch((err) => {
+          alert(`Error: ${err.message}`);
+        })
+    }
+  });
+
+  useEffect(() => {
+    console.log(offerToAccept);
+
+  }, [offerToAccept])
+
+  const handleAcceptOffer = async (_offerId) => {
+    //turn other accept buttons gray
+    var buttons = document.getElementsByClassName('defaultbtn');
+
+    let buttonsToGray = [...marketplaceButtonName];
+    for (var i = 0; i < buttons.length + 1; i++) {
+
+      if (buttonsToGray[i] === "Accept Offer" && i != _offerId - 1) {
+
+        var buttonElement = buttons[i] as HTMLButtonElement;
+        buttonElement.disabled = true;
+        buttonsToGray[i] = "";
+        // if (i != _offerId - 1) {
+        // }
+      }
+    }
+    setMarketplaceButtonName(buttonsToGray);
+
+    //get wanted tokens array from smart contract
+    if (web3 && account && chainId) {
+      const _offerToAccept = await tradeOfferWrapper?.getOfferArrayToAccept(_offerId - 1);
+      let offerToAccept = (String(_offerToAccept)).split(",");
+      setCurrentOfferToAccept(offerToAccept);
+      console.log(marketplaceButtonName);
+      console.log(marketplaceButtonName[_offerId - 1]);
+
+      changeMarketplaceButtonName(_offerId - 1, buttonsToGray, offerToAccept)
+
+
+
+    }
+
+    // for (let i = 0; i < tokensOffered.length; i++) {
+    //   if (!isApproved[tokensOffered[i].token] && tokensOffered[i].token.length > 0) {
+    //     const bName = `Approve ${tokensOffered[i].token}`
+    //     setButtonName(bName);
+    //     break;
+    //   }
+    //   setButtonName("Create Offer")
+    // }
+
+  };
+
+  const handleTransactAcceptOffer = async (_offerId) => {
+    if (web3 && account && chainId) {
+      setLoading(true);
+      tradeOfferWrapper?.acceptOffer(_offerId - 1)
+        .then(() => {
+          alert("Offer cancelled successfully!");
+        })
+        .then(() => {
+          setLoading(false);
+          window.location.reload();
+        })
+        .catch((err) => {
+          alert(`Error: ${err.message}`);
+        })
+    }
+
+  };
+
+  const changeMarketplaceButtonName = async (index: number, _arrayButtonsName: string[], _offerArray: string[]) => {
+    for (let i = 0; i < offerToAccept.length; i++) {
+
+      let marketplaceButtonNameTemp = [..._arrayButtonsName];
+      let currentOffer = [..._offerArray]
+      console.log(marketplaceButtonNameTemp);
+      console.log(clayAllowance);
+      console.log(clayAllowance === "0");
+      console.log(currentOffer);
+      console.log((currentOffer[0]));
+      console.log((currentOffer[0]) != "0");
+
+
+      //check allowance of tokens
+      if (woodAllowance === "0" && currentOffer[0] != "0") {
+        console.log("running");
+
+        const bName = "Approve WOOD";
+        marketplaceButtonNameTemp[index] = bName
+        setMarketplaceButtonName(marketplaceButtonNameTemp);
+        break;
+      }
+      if (rockAllowance === "0" && currentOffer[1] != "0") {
+        const bName = "Approve ROCK";
+        marketplaceButtonNameTemp[index] = bName
+        setMarketplaceButtonName(marketplaceButtonNameTemp);
+        break;
+      }
+      if (clayAllowance === "0" && currentOffer[2] != "0") {
+        const bName = "Approve CLAY";
+        marketplaceButtonNameTemp[index] = bName
+        setMarketplaceButtonName(marketplaceButtonNameTemp);
+        break;
+      }
+      if (woolAllowance === "0" && currentOffer[3] != "0") {
+        const bName = "Approve WOOL";
+        marketplaceButtonNameTemp[index] = bName
+        setMarketplaceButtonName(marketplaceButtonNameTemp);
+        break;
+      }
+      if (fishAllowance === "0" && currentOffer[4] != "0") {
+        const bName = "Approve FISH";
+        marketplaceButtonNameTemp[index] = bName
+        setMarketplaceButtonName(marketplaceButtonNameTemp);
+        break;
+
+      }
+
+      marketplaceButtonNameTemp[index] = "Transact"
+      setMarketplaceButtonName(marketplaceButtonNameTemp);
+      console.log(marketplaceButtonNameTemp);
+
+    }
+
+  }
+
+
   // Function to connect to XDCPay
   const handleConnectXDCPay = useCallback(() => {
     connect();
@@ -663,11 +869,40 @@ const App: React.FC = () => {
                   <li key={offer.id}>
                     <strong>Offer Id: {offer?.id}</strong>
                     <p>{offer.offerString}</p>
-                    <p>Your Offer: {offer?.offerCrreator}</p>
-                    <p>Offer Status: {offer?.offerStatus}</p>
+                    {/* <p>Your Offer: {offer?.offerCrreator}</p>
+                    <p>Offer Status: {offer?.offerStatus}</p> */}
                     {/* <p>Date: {offer.date}</p>
                     <p>Time: {offer.time}</p> */}
-                    <button className={`defaultbtn ${marketplaceButtonName[index]=="Accept Offer"? "acceptbtn":"cancelbtn"}`} onClick={() => handleSubmitOffer()}> {marketplaceButtonName[index]}</button>
+                    {/* <button className={`defaultbtn ${marketplaceButtonName[index] == "Accept Offer" ? "acceptbtn" : "cancelbtn"}`} onClick={() => handleCancelOffer(offer?.id)}> {`${marketplaceButtonName[index]} ${offer?.id}`}</button> */}
+                    <div>
+                      {
+                        loading ? <HashLoader color="#0ca02c" /> :
+                          <button className={`defaultbtn ${marketplaceButtonName[index] == "Accept Offer" ||
+                            marketplaceButtonName[index] == "Transact" ||
+                            marketplaceButtonName[index] == "Approve WOOD" ||
+                            marketplaceButtonName[index] == "Approve ROCK" ||
+                            marketplaceButtonName[index] == "Approve CLAY" ||
+                            marketplaceButtonName[index] == "Approve WOOL" ||
+                            marketplaceButtonName[index] == "Approve FISH"
+                            ? "acceptbtn" :
+                            marketplaceButtonName[index] == "Cancel Offer" ? "cancelbtn" :
+                              "graybtn"}`} onClick={() => {
+                                marketplaceButtonName[index] === "Cancel Offer" ? handleCancelOffer(offer?.id) :
+                                  marketplaceButtonName[index] === 'Accept Offer' ? handleAcceptOffer(offer?.id) :
+                                    marketplaceButtonName[index] === "Approve WOOD" ? handleApproveWood(true) :
+                                      marketplaceButtonName[index] === 'Approve ROCK' ? handleApproveRock(true) :
+                                        marketplaceButtonName[index] === 'Approve CLAY' ? handleApproveClay(true) :
+                                          marketplaceButtonName[index] === 'Approve WOOL' ? handleApproveWool(true) :
+                                            marketplaceButtonName[index] === 'Approve FISH' ? handleApproveFish(true) :
+                                              marketplaceButtonName[index] === 'Transact' ? handleTransactAcceptOffer(offer?.id) :
+
+                                                console.log("")
+                              }}
+                          >
+                            {marketplaceButtonName[index]}
+                          </button>
+                      }
+                    </div>
                   </li>
                 ))}
             </ul>
@@ -743,11 +978,11 @@ const App: React.FC = () => {
               loading ? <HashLoader color="#0ca02c" /> : <button id="create-offer" onClick={() => {
                 buttonName === "Create Offer" ? handleCreateOffer() :
                   buttonName === 'Submit Offer' ? handleSubmitOffer() :
-                    buttonName === 'Approve WOOD' ? handleApproveWood() :
-                      buttonName === 'Approve ROCK' ? handleApproveRock() :
-                        buttonName === 'Approve CLAY' ? handleApproveClay() :
-                          buttonName === 'Approve WOOL' ? handleApproveWool() :
-                            buttonName === 'Approve FISH' ? handleApproveFish() :
+                    buttonName === 'Approve WOOD' ? handleApproveWood(false) :
+                      buttonName === 'Approve ROCK' ? handleApproveRock(false) :
+                        buttonName === 'Approve CLAY' ? handleApproveClay(false) :
+                          buttonName === 'Approve WOOL' ? handleApproveWool(false) :
+                            buttonName === 'Approve FISH' ? handleApproveFish(false) :
                               console.log("")
               }}
               >

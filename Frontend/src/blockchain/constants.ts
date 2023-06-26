@@ -42,6 +42,6 @@ export const WoolTokenAddress = {
 
 export const tradeOfferAddress = {
   Contract: {
-    51: "0x5da66cAE2B37Ee0C6DE980D0c082A896217155c3",
+    51: "0xb97A6231F10D897a49e150C9a037d028977768ac",
   },
 };

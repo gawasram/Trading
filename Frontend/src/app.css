@@ -9,6 +9,10 @@
   background-position: center;
 }
 
+/* .open-offers {
+  background-color: #efefee;
+} */
+
 .token-wrapper {
   margin-top: 15%;
   display: flex;
@@ -100,6 +104,42 @@ button {
 
 .addbtn:hover {
   transform: scale(1.1);
+}
+
+.acceptbtn {
+  background: #0ca02c !important;
+  transition: all 0.2s linear;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+.acceptbtn:hover{
+  scale: 1.1;
+}
+.cancelbtn:hover{
+  scale: 1.1;
+}
+
+.cancelbtn {
+  background-color: rgb(197, 33, 33) !important;
+  transition: all 0.2s linear;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+.defaultbtn {
+  color: white;
+  background-color: white;
+}
+
+/* .defaultbtn:hover {
+  scale: 1.1;
+} */
+
+.graybtn {
+  width: 1 px;
 }
 
 @media (max-width: 720px) {
