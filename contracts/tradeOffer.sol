@@ -65,19 +65,19 @@ contract tradeOffer {
 
     Counters.Counter private offerCounter;
 
-    // constructor(
-    //     address _token1,
-    //     address _token2,
-    //     address _token3,
-    //     address _token4,
-    //     address _token5
-    // ) {
-    //     token1 = _token1;
-    //     token2 = _token2;
-    //     token3 = _token3;
-    //     token4 = _token4;
-    //     token5 = _token5;
-    // }
+    constructor() {
+        //     address _token1,
+        //     address _token2,
+        //     address _token3,
+        //     address _token4,
+        //     address _token5
+        // ) {
+        //     token1 = _token1;
+        //     token2 = _token2;
+        //     token3 = _token3;
+        //     token4 = _token4;
+        //     token5 = _token5;
+    }
 
     function makeOffer(
         uint256 _offerAmount1,
@@ -199,7 +199,7 @@ contract tradeOffer {
 
     function acceptOffer(uint256 _offerId) public {
         require(_offerId >= 0, "Offer does not exist");
-        require(offerMapping[_offerId].offerStatus == true, "Invalid Offer");
+        require(offerMapping[_offerId].offerStatus, "Invalid Offer");
         require(
             msg.sender != offerMapping[_offerId].offerCreator,
             "You cannot accept your own offer"
@@ -400,7 +400,7 @@ contract tradeOffer {
                 "Transfer of token5 failed"
             );
         }
-        delete offerMapping[_offerId];
+        offerMapping[_offerId].offerStatus = false;
     }
 
     //getter functions
@@ -602,7 +602,11 @@ contract tradeOffer {
     }
 
     function getNumberOfOffers() public view returns (uint256) {
-        return (offerIDs[offerIDs.length - 1] + 1);
+        if (offerIDs.length > 0) {
+            return (offerIDs[offerIDs.length - 1] + 1);
+        } else {
+            return 0;
+        }
     }
 
     function getOfferStatus(uint256 _offerId) public view returns (bool) {
@@ -616,27 +620,60 @@ contract tradeOffer {
     function getOfferStringsArray() public view returns (string[] memory) {
         uint256 numberOfOffers = getNumberOfOffers();
         string[] memory offerStringArray = new string[](numberOfOffers);
+
         for (uint256 i = 0; i < numberOfOffers; i++) {
-            offerStringArray[i] = getOfferString(i);
+            if (offerMapping[i].offerStatus) {
+                offerStringArray[i] = getOfferString(i);
+            }
         }
         return offerStringArray;
-    }
-
-    function getOfferStatusArray() public view returns (bool[] memory) {
-        uint256 numberOfOffers = getNumberOfOffers();
-        bool[] memory OfferStatusArray = new bool[](numberOfOffers);
-        for (uint256 i = 0; i < numberOfOffers; i++) {
-            OfferStatusArray[i] = getOfferStatus(i);
-        }
-        return OfferStatusArray;
     }
 
     function getOfferCreatorsArray() public view returns (bool[] memory) {
         uint256 numberOfOffers = getNumberOfOffers();
         bool[] memory offerCreatorsArray = new bool[](numberOfOffers);
-        for (uint256 i = 0; i < numberOfOffers; i++) {
-            offerCreatorsArray[i] = msg.sender == offerMapping[i].offerCreator;
+        if (numberOfOffers > 0) {
+            for (uint256 i = 0; i < numberOfOffers; i++) {
+                if (offerMapping[i].offerStatus) {
+                    offerCreatorsArray[i] = getOfferCreator(i);
+                }
+            }
         }
         return offerCreatorsArray;
     }
+
+    
+
+    // function getOfferStatusArray() public view returns (bool[] memory) {
+    //     uint256 numberOfOffers = getNumberOfOffers();
+    //     bool[] memory OfferStatusArray = new bool[](numberOfOffers);
+    //     for (uint256 i = 0; i < numberOfOffers; i++) {
+    //         OfferStatusArray[i] = getOfferStatus(i);
+    //     }
+    //     return OfferStatusArray;
+    // }
+
+    function getOfferArrayToAccept(uint256 _offerId)
+        public
+        view
+        returns (uint256[] memory)
+    {
+        Offer storage offer = offerMapping[_offerId];
+
+        uint256[] memory wantedAmounts = new uint256[](5);
+        wantedAmounts[0] = offer.wantedAmount1;
+        wantedAmounts[1] = offer.wantedAmount2;
+        wantedAmounts[2] = offer.wantedAmount3;
+        wantedAmounts[3] = offer.wantedAmount4;
+        wantedAmounts[4] = offer.wantedAmount5;
+
+        return (wantedAmounts);
+    }
+
+    // function getContractStatus() public view returns(string[] memory) {
+    //     uint256 number = getNumberOfOffers();
+    //     for (uint256 i = 0; i < number; i++) {
+
+    //     }
+    // }
 }

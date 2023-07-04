@@ -3,7 +3,9 @@ import "./app.css";
 import { Web3ModalContext } from "./contexts/Web3ModalProvider";
 import { BlockchainContext } from "./contexts/BlockchainProvider";
 import { HashLoader } from "react-spinners";
-import CustomModal from "./CustomModal";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+// import { modal } from "./modal.js";
 
 interface QuerriedOffer {
   id: number;
@@ -74,6 +76,23 @@ const App: React.FC = () => {
   const [marketplacePopulated, setMarketplacePopulated] = useState<number>(0);
 
   const [marketplaceButtonName, setMarketplaceButtonName] = useState<string[]>([]);
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  useEffect(() => {
+    handleShow();
+  }, [])
+
+  useEffect(() => {
+    if (woodAllowance !== "0" && rockAllowance !== "0" && clayAllowance !== "0" && woolAllowance !== "0" && fishAllowance !== "0") {
+      handleClose();
+      console.log("all apprved");
+    } else {
+      handleShow();
+    }
+  }, [woodAllowance, rockAllowance, clayAllowance, woolAllowance, fishAllowance])
 
   useEffect(() => {
     if (numberOfOffers > 0) {
@@ -419,8 +438,6 @@ const App: React.FC = () => {
       alert("Please fill in all the token wanted fields.");
       return;
     }
-    openModal();
-  }, [web3, account, tokensOffered, tokensWanted]);
 
 
     // Create an array to store the ordered Offered tokens
@@ -529,9 +546,10 @@ const App: React.FC = () => {
           alert(`Error: ${err.message}`);
         })
     }
+
   };
 
-  
+
   // Function to connect to XDCPay
   const handleConnectXDCPay = useCallback(() => {
     connect();
@@ -546,21 +564,42 @@ const App: React.FC = () => {
     return `xdc${address.slice(2, width + 2)}...${address.slice(-width)}`;
   }
 
-  //New state variable to track the modal's visibility
-  const [isModalOpen, setModalOpen] = useState(false);
-  const openModal = () => {
-    setModalOpen(true);
-  };
-  
-  const closeModal = () => {
-    setModalOpen(false);
-  };
-  
-
-
   return (
     <main className="main">
+
+      {/* popup modal */}
+
       <div className="button-container">
+        <>
+          <Modal show={show} backdrop="static" keyboard={false}>
+            <Modal.Header>
+              <Modal.Title id="example-modal-sizes-title-lg">
+                Provide Approvals
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+
+              {loading ? <HashLoader color="#0ca02c" /> : <button className={`${woodAllowance === "0" ? "approvebtn" : "graybtn"}`} onClick={() => { woodAllowance === "0" ? handleApproveWood() : console.log("Wood approved") }}>
+                {`${woodAllowance === "0" ? "Approve Wood" : "Wood Approved"}`}
+              </button>}
+
+              {loading ? <HashLoader color="#0ca02c" /> : <button className={`${rockAllowance === "0" ? "approvebtn" : "graybtn"}`} onClick={() => { rockAllowance === "0" ? handleApproveRock() : console.log("Rock approved") }}>
+                {`${rockAllowance === "0" ? "Approve Rock" : "Rock Approved"}`}
+              </button>}
+
+              {loading ? <HashLoader color="#0ca02c" /> : <button className={`${clayAllowance === "0" ? "approvebtn" : "graybtn"}`} onClick={() => { clayAllowance === "0" ? handleApproveClay() : console.log("Clay approved") }}>
+                {`${clayAllowance === "0" ? "Approve Clay" : "CLay Approved"}`}
+              </button>}
+
+              {loading ? <HashLoader color="#0ca02c" /> : <button className={`${woolAllowance === "0" ? "approvebtn" : "graybtn"}`} onClick={() => { woolAllowance === "0" ? handleApproveWool() : console.log("Wool  approved") }}>
+                {`${woolAllowance === "0" ? "Approve Wool" : "Wool Approved"}`}
+              </button>}
+              {loading ? <HashLoader color="#0ca02c" /> : <button className={`${fishAllowance === "0" ? "approvebtn" : "graybtn"}`} onClick={() => { fishAllowance === "0" ? handleApproveFish() : console.log("Clay approved") }}>
+                {`${fishAllowance === "0" ? "Approve Fish" : "Fish Approved"}`}
+              </button>}
+            </Modal.Body>
+          </Modal>
+        </>
         {!account ? (
           <button className="addbtn connect" onClick={handleConnectXDCPay}>Connect XDCPay</button>
         ) : (
@@ -580,19 +619,18 @@ const App: React.FC = () => {
                     <strong>Offer Id: {offer?.id}</strong>
                     <p>{offer.offerString}</p>
                     <div>
-                      {
-                        loading ? <HashLoader color="#0ca02c" /> :
-                          <button className={`defaultbtn ${marketplaceButtonName[index] == "Accept Offer"
-                            ? "acceptbtn" :
-                            marketplaceButtonName[index] == "Cancel Offer" ? "cancelbtn" :
-                              "graybtn"}`} onClick={() => {
-                                marketplaceButtonName[index] === "Cancel Offer" ? handleCancelOffer(offer?.id) :
-                                  marketplaceButtonName[index] === 'Accept Offer' ? handleTransactAcceptOffer(offer?.id) :
-                                    console.log("")
-                              }}
-                          >
-                            {marketplaceButtonName[index]}
-                          </button>
+                      {loading ? <HashLoader color="#0ca02c" /> :
+                        <button className={`defaultbtn ${marketplaceButtonName[index] == "Accept Offer"
+                          ? "acceptbtn" :
+                          marketplaceButtonName[index] == "Cancel Offer" ? "cancelbtn" :
+                            "graybtn"}`} onClick={() => {
+                              marketplaceButtonName[index] === "Cancel Offer" ? handleCancelOffer(offer?.id) :
+                                marketplaceButtonName[index] === 'Accept Offer' ? handleTransactAcceptOffer(offer?.id) :
+                                  console.log("")
+                            }}
+                        >
+                          {marketplaceButtonName[index]}
+                        </button>
                       }
                     </div>
                   </li>
@@ -667,18 +705,14 @@ const App: React.FC = () => {
 
           <div>
             {
-              loading ? <HashLoader color="#0ca02c" /> : <button id="create-offer" onClick={() => {handleCreateOffer()
+              loading ? <HashLoader color="#0ca02c" /> : <button id="create-offer" onClick={() => {
+                handleCreateOffer()
               }}
               >
                 {"Create Offer"}
               </button>
             }
           </div>
-          <CustomModal
-      isOpen={isModalOpen}
-      onClose={closeModal}
-      onAccept={/* Handle the accept button click */}
-    />
         </div>
       </div>
     </main>

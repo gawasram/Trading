@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import Web3ModalProvider from "./contexts/Web3ModalProvider";
 import { BlockchainProvider } from "./contexts/BlockchainProvider";
 import App from "./app";
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
